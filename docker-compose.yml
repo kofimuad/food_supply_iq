@@ -1,0 +1,44 @@
+# Local development infrastructure for FoodSupply IQ.
+# Mirrors the Railway production services: Postgres+PostGIS and Redis.
+# Usage: docker compose up -d   (or: pnpm infra:up)
+
+services:
+  db:
+    # IMPORTANT: PostGIS image — mirrors the Railway PostGIS template (postgis/postgis:17-3.5).
+    # The plain postgres image does NOT ship the postgis extension.
+    image: postgis/postgis:17-3.5
+    container_name: fsiq-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: fsiq
+      POSTGRES_PASSWORD: fsiq
+      POSTGRES_DB: fsiq
+    ports:
+      # Host 5440 to avoid clashing with a native Windows PostgreSQL on 5432.
+      - "5440:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fsiq -d fsiq"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: fsiq-redis
+    restart: unless-stopped
+    ports:
+      # Host 6380 to avoid clashing with the sister AFDP project's Redis on 6379.
+      - "6380:6379"
+    volumes:
+      - redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  pgdata:
+  redisdata:

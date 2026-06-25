@@ -1,0 +1,23 @@
+{
+  "name": "food-supply-iq",
+  "version": "0.1.0",
+  "private": true,
+  "description": "FoodSupply IQ — African food distribution intelligence (monorepo root)",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=9.0.0"
+  },
+  "scripts": {
+    "infra:up": "docker compose up -d",
+    "infra:down": "docker compose down",
+    "infra:logs": "docker compose logs -f",
+    "web": "pnpm --filter web dev",
+    "mobile": "pnpm --filter mobile start",
+    "lint:web": "pnpm --filter web lint",
+    "format": "prettier --write \"web/**/*.{ts,tsx,js,jsx,json,css,md}\" \"mobile/**/*.{ts,tsx,js,jsx,json}\""
+  },
+  "devDependencies": {
+    "prettier": "^3.3.3"
+  },
+  "packageManager": "pnpm@9.15.0"
+}

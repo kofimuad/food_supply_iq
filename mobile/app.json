@@ -1,0 +1,26 @@
+{
+  "expo": {
+    "name": "FoodSupply IQ",
+    "slug": "food-supply-iq",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "light",
+    "scheme": "fsiq",
+    "newArchEnabled": false,
+    "splash": {
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.hydra.foodsupplyiq"
+    },
+    "android": {
+      "package": "com.hydra.foodsupplyiq"
+    },
+    "extra": {
+      "apiUrl": "http://localhost:8000"
+    }
+  }
+}
