@@ -4,12 +4,13 @@ import asyncio
 from logging.config import fileConfig
 
 from alembic import context
+
+# Import models so Alembic autogenerate sees every table on Base.metadata.
+from app import models  # noqa: F401
 from app.config import get_settings
 from app.db import Base
+from geoalchemy2 import alembic_helpers
 from sqlalchemy.ext.asyncio import create_async_engine
-
-# Import models here so Alembic autogenerate sees them (added in Story 0.2+).
-# from app import models  # noqa: F401
 
 config = context.config
 if config.config_file_name is not None:
@@ -19,8 +20,33 @@ target_metadata = Base.metadata
 settings = get_settings()
 
 
+def include_object(obj, name, type_, reflected, compare_to):
+    """Keep autogenerate to *our* tables.
+
+    The postgis/postgis image ships the tiger-geocoder and topology schemas on
+    the search path, so a naive autogenerate tries to DROP dozens of tables we
+    don't own. Ignore any reflected object whose table isn't in our metadata,
+    then defer to geoalchemy2 for geography columns / spatial indexes.
+    """
+    if reflected and type_ == "table" and name not in target_metadata.tables:
+        return False
+    if reflected and type_ in ("index", "unique_constraint", "foreign_key_constraint", "column"):
+        table = getattr(obj, "table", None)
+        if table is not None and table.name not in target_metadata.tables:
+            return False
+    return alembic_helpers.include_object(obj, name, type_, reflected, compare_to)
+
+
 def do_run_migrations(connection) -> None:
-    context.configure(connection=connection, target_metadata=target_metadata)
+    # geoalchemy2 helpers teach autogenerate about geography columns + spatial
+    # indexes; include_object filters out PostGIS-managed tables.
+    context.configure(
+        connection=connection,
+        target_metadata=target_metadata,
+        include_object=include_object,
+        render_item=alembic_helpers.render_item,
+        process_revision_directives=alembic_helpers.writer,
+    )
     with context.begin_transaction():
         context.run_migrations()
 
