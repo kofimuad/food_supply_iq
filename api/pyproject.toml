@@ -14,6 +14,9 @@ dependencies = [
     "pydantic-settings>=2.6.0",
     "arq>=0.26.0",
     "redis>=5.2.0",
+    "pyjwt>=2.10.0",
+    "argon2-cffi>=23.1.0",
+    "email-validator>=2.2.0",
 ]
 
 [project.optional-dependencies]
@@ -34,8 +37,26 @@ extend-exclude = ["alembic/versions"]
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B", "ASYNC"]
 
+[tool.ruff.lint.flake8-bugbear]
+# FastAPI's dependency-injection defaults are idiomatic, not B008 bugs.
+extend-immutable-calls = [
+    "fastapi.Depends",
+    "fastapi.Query",
+    "fastapi.Path",
+    "fastapi.Body",
+    "fastapi.Security",
+    "fastapi.File",
+    "fastapi.Form",
+    "fastapi.Header",
+    "fastapi.Cookie",
+]
+
 [tool.pytest.ini_options]
 asyncio_mode = "auto"
+# One shared event loop for the whole session so the async DB engine's pooled
+# asyncpg connections stay valid across tests (they're pinned to their loop).
+asyncio_default_fixture_loop_scope = "session"
+asyncio_default_test_loop_scope = "session"
 testpaths = ["tests"]
 
 [tool.setuptools.packages.find]

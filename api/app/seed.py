@@ -32,6 +32,10 @@ from app.models.enums import (
     UserRole,
     VisitOutcome,
 )
+from app.security import hash_password
+
+# Shared password for all demo users (local dev only).
+DEMO_PASSWORD = "password123"
 
 
 def point(lng: float, lat: float) -> WKTElement:
@@ -46,17 +50,25 @@ async def seed() -> None:
             print(f"Seed skipped — {existing} users already present.")
             return
 
-        # --- Users ---
+        # --- Users (all share DEMO_PASSWORD for local login) ---
+        pw = hash_password(DEMO_PASSWORD)
         manager = User(
-            email="manager@foodsupplyiq.test",
+            email="manager@foodsupplyiq.com",
             full_name="Bismark Agyei",
             role=UserRole.manager,
+            hashed_password=pw,
         )
         rep_dmv = User(
-            email="rep.dmv@foodsupplyiq.test", full_name="Ama Boateng", role=UserRole.rep
+            email="rep.dmv@foodsupplyiq.com",
+            full_name="Ama Boateng",
+            role=UserRole.rep,
+            hashed_password=pw,
         )
         rep_accra = User(
-            email="rep.accra@foodsupplyiq.test", full_name="Kwesi Mensah", role=UserRole.rep
+            email="rep.accra@foodsupplyiq.com",
+            full_name="Kwesi Mensah",
+            role=UserRole.rep,
+            hashed_password=pw,
         )
         db.add_all([manager, rep_dmv, rep_accra])
         await db.flush()
@@ -221,6 +233,9 @@ async def seed() -> None:
             f"{len(dmv_accounts) + len(accra_accounts)} accounts, "
             "2 contacts, 1 visit, 1 sample, 2 orders (1 trial + 1 repeat)."
         )
+        print(f"Login with any user below / password '{DEMO_PASSWORD}':")
+        print("  manager@foodsupplyiq.com (manager)")
+        print("  rep.dmv@foodsupplyiq.com / rep.accra@foodsupplyiq.com (rep)")
 
 
 if __name__ == "__main__":

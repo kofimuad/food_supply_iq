@@ -21,6 +21,14 @@ class Settings(BaseSettings):
     # CORS origins for the web dashboard / mobile dev client.
     cors_origins: list[str] = ["http://localhost:3000", "http://localhost:8081"]
 
+    # --- Auth / JWT (Story 0.3) ---
+    jwt_secret: str = "dev-insecure-change-me-0123456789abcdef"
+    jwt_algorithm: str = "HS256"
+    # Access tokens are generous so a rep can stay productive offline for a full
+    # field day without a refresh; refresh tokens are long-lived for the same reason.
+    access_token_expire_minutes: int = 60 * 12  # 12 hours
+    refresh_token_expire_days: int = 90
+
 
 @lru_cache
 def get_settings() -> Settings:

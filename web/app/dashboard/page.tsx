@@ -1,0 +1,53 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import { useAuth } from "@/lib/auth-context";
+
+export default function DashboardPage() {
+  const { user, status, logout } = useAuth();
+  const router = useRouter();
+
+  // Client-side route guard.
+  useEffect(() => {
+    if (status === "anon") router.replace("/login");
+  }, [status, router]);
+
+  if (status !== "authed" || !user) {
+    return (
+      <main className="container mx-auto flex min-h-screen items-center justify-center">
+        <p className="text-sm text-muted-foreground">Loading…</p>
+      </main>
+    );
+  }
+
+  return (
+    <main className="container mx-auto flex min-h-screen flex-col gap-6 py-12">
+      <header className="flex items-center justify-between border-b pb-4">
+        <div>
+          <h1 className="text-2xl font-semibold tracking-tight">FoodSupply IQ</h1>
+          <p className="text-sm text-muted-foreground">Manager dashboard</p>
+        </div>
+        <div className="flex items-center gap-4 text-sm">
+          <span className="text-muted-foreground">
+            {user.full_name} · <span className="font-medium">{user.role}</span>
+          </span>
+          <button
+            onClick={logout}
+            className="rounded-md border border-input px-3 py-1.5 font-medium hover:bg-accent"
+          >
+            Sign out
+          </button>
+        </div>
+      </header>
+
+      <section className="rounded-lg border p-6">
+        <p className="text-sm text-muted-foreground">
+          You are signed in as <span className="font-medium text-foreground">{user.email}</span>.
+          KPIs, the sample→trial→repeat funnel, the territory map, and the activity feed land in
+          Epics 1–6.
+        </p>
+      </section>
+    </main>
+  );
+}
