@@ -2,6 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth-context";
 
 export default function DashboardPage() {
@@ -32,22 +34,21 @@ export default function DashboardPage() {
           <span className="text-muted-foreground">
             {user.full_name} · <span className="font-medium">{user.role}</span>
           </span>
-          <button
-            onClick={logout}
-            className="rounded-md border border-input px-3 py-1.5 font-medium hover:bg-accent"
-          >
+          <Button variant="outline" size="sm" onClick={logout}>
             Sign out
-          </button>
+          </Button>
         </div>
       </header>
 
-      <section className="rounded-lg border p-6">
-        <p className="text-sm text-muted-foreground">
-          You are signed in as <span className="font-medium text-foreground">{user.email}</span>.
-          KPIs, the sample→trial→repeat funnel, the territory map, and the activity feed land in
-          Epics 1–6.
-        </p>
-      </section>
+      <Card>
+        <CardContent className="pt-6">
+          <p className="text-sm text-muted-foreground">
+            You are signed in as <span className="font-medium text-foreground">{user.email}</span>.
+            KPIs, the sample→trial→repeat funnel, the territory map, and the activity feed land in
+            Epics 1–6.
+          </p>
+        </CardContent>
+      </Card>
     </main>
   );
 }

@@ -14,9 +14,13 @@
     "web": "pnpm --filter web dev",
     "mobile": "pnpm --filter mobile start",
     "lint:web": "pnpm --filter web lint",
-    "format": "prettier --write \"web/**/*.{ts,tsx,js,jsx,json,css,md}\" \"mobile/**/*.{ts,tsx,js,jsx,json}\""
+    "format": "prettier --write \"web/**/*.{ts,tsx,js,jsx,json,css,md}\" \"mobile/**/*.{ts,tsx,js,jsx,json}\"",
+    "gen:openapi": "cd api && python scripts/export_openapi.py",
+    "gen:types": "openapi-typescript packages/api-types/openapi.json -o packages/api-types/schema.d.ts",
+    "gen:api": "pnpm gen:openapi && pnpm gen:types"
   },
   "devDependencies": {
+    "openapi-typescript": "^7.4.2",
     "prettier": "^3.3.3"
   },
   "pnpm": {

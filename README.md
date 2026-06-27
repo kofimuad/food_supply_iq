@@ -84,6 +84,19 @@ pnpm mobile                            # opens Expo dev tools; scan QR with Expo
 | `api/`               | FastAPI app, Alembic migrations (`api/alembic/`), arq worker   |
 | `web/`               | Next.js App Router, Tailwind + shadcn tokens, TanStack Query   |
 | `mobile/`            | Expo / React Native app                                        |
+| `packages/api-types/`| Typed API contract generated from OpenAPI (`@fsiq/api-types`)  |
+| `docs/`              | `erd.md` (data model), `design-system.md` (tokens/components)  |
 | `.pre-commit-config.yaml` | ruff (api) + prettier (web/mobile) — `pre-commit install` |
 
 Code style: **ruff** for Python, **eslint + prettier** for TS/JS.
+
+### API contract & typed clients
+
+The FastAPI app publishes OpenAPI at `/openapi.json` (Swagger UI at `/docs`).
+Web and mobile share generated types from `packages/api-types` — never hand-write
+request/response shapes. Regenerate after any API change (needs the api venv +
+Node):
+
+```bash
+pnpm gen:api    # export openapi.json from FastAPI, then run openapi-typescript
+```

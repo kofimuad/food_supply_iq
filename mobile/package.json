@@ -10,6 +10,7 @@
     "web": "expo start --web"
   },
   "dependencies": {
+    "@fsiq/api-types": "workspace:*",
     "expo": "~51.0.39",
     "expo-secure-store": "~13.0.2",
     "expo-status-bar": "~1.12.1",

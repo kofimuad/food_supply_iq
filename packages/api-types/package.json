@@ -1,0 +1,11 @@
+{
+  "name": "@fsiq/api-types",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Types generated from the FoodSupply IQ OpenAPI contract (type-only).",
+  "types": "index.ts",
+  "main": "index.ts",
+  "exports": {
+    ".": "./index.ts"
+  }
+}

@@ -5,3 +5,7 @@ build
 .expo
 pnpm-lock.yaml
 api
+
+# Generated from the OpenAPI schema (pnpm gen:api)
+packages/api-types/schema.d.ts
+packages/api-types/openapi.json

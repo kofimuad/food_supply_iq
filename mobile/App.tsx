@@ -2,6 +2,7 @@ import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
 import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
 import { bootstrap, clearTokens, login } from "./src/auth";
+import { colors, fontSize, radius, spacing } from "./src/theme";
 import type { User } from "./src/types";
 
 type Status = "loading" | "anon" | "authed";
@@ -114,44 +115,49 @@ function HomeScreen({ user, onSignOut }: { user: User; onSignOut: () => void }) 
 }
 
 const styles = StyleSheet.create({
-  center: { flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff" },
-  container: {
+  center: {
     flex: 1,
-    backgroundColor: "#fff",
     alignItems: "center",
     justifyContent: "center",
-    padding: 24,
-    gap: 12,
+    backgroundColor: colors.background,
   },
-  title: { fontSize: 28, fontWeight: "600" },
-  subtitle: { fontSize: 16, color: "#444" },
-  note: { fontSize: 13, color: "#777", textAlign: "center", marginTop: 4 },
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+    alignItems: "center",
+    justifyContent: "center",
+    padding: spacing.xl,
+    gap: spacing.md,
+  },
+  title: { fontSize: fontSize.title, fontWeight: "600", color: colors.foreground },
+  subtitle: { fontSize: fontSize.lg, color: colors.foreground },
+  note: { fontSize: fontSize.sm, color: colors.muted, textAlign: "center", marginTop: spacing.xs },
   input: {
     width: "100%",
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingHorizontal: 12,
-    paddingVertical: 10,
-    fontSize: 15,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm + 2,
+    fontSize: fontSize.base,
   },
-  error: { color: "#c0392b", fontSize: 13 },
+  error: { color: colors.destructive, fontSize: fontSize.sm },
   button: {
     width: "100%",
-    backgroundColor: "#111",
-    borderRadius: 8,
-    paddingVertical: 12,
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
     alignItems: "center",
   },
   buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: "#fff", fontWeight: "600" },
+  buttonText: { color: colors.primaryForeground, fontWeight: "600" },
   buttonOutline: {
     borderWidth: 1,
-    borderColor: "#ccc",
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    marginTop: 8,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingVertical: spacing.sm + 2,
+    paddingHorizontal: spacing.lg + 4,
+    marginTop: spacing.sm,
   },
-  buttonOutlineText: { color: "#111", fontWeight: "600" },
+  buttonOutlineText: { color: colors.foreground, fontWeight: "600" },
 });
