@@ -17,6 +17,9 @@ FROM node:20-slim AS runner
 WORKDIR /app
 ENV NODE_ENV=production
 ENV PORT=3000
+# Next's standalone server binds to localhost unless HOSTNAME is set; bind to
+# all interfaces so Railway's healthcheck (external) can reach it.
+ENV HOSTNAME=0.0.0.0
 
 # Standalone bundle (traced from the monorepo root) + static assets.
 COPY --from=builder /repo/web/.next/standalone ./
