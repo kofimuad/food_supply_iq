@@ -5,6 +5,15 @@ FROM node:20-slim AS builder
 RUN corepack enable
 WORKDIR /repo
 
+# NEXT_PUBLIC_* are inlined into the client bundle at build time, so they must be
+# present during `next build`. Railway passes service variables as build args;
+# declare them here so they reach the build (and fail loudly if unset is fine —
+# it falls back to the localhost default in lib/api.ts).
+ARG NEXT_PUBLIC_API_URL
+ENV NEXT_PUBLIC_API_URL=$NEXT_PUBLIC_API_URL
+ARG NEXT_PUBLIC_MAPBOX_TOKEN
+ENV NEXT_PUBLIC_MAPBOX_TOKEN=$NEXT_PUBLIC_MAPBOX_TOKEN
+
 # Workspace manifests first for layer caching.
 COPY pnpm-workspace.yaml package.json pnpm-lock.yaml .npmrc ./
 COPY packages ./packages
