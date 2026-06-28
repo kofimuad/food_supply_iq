@@ -37,6 +37,10 @@ class Settings(BaseSettings):
     access_token_expire_minutes: int = 60 * 12  # 12 hours
     refresh_token_expire_days: int = 90
 
+    # Mapbox token for geocoding addresses (Epic 1) / maps + routing (Epics 5, 10).
+    # If unset, account geocoding is skipped gracefully.
+    mapbox_token: str | None = None
+
     @field_validator("database_url")
     @classmethod
     def _ensure_asyncpg_driver(cls, v: str) -> str:
