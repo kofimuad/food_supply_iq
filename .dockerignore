@@ -1,0 +1,16 @@
+# Repo-root build context (used by the web service Dockerfile).
+**/node_modules
+**/.next
+**/.expo
+**/dist
+**/build
+**/.venv
+**/__pycache__
+**/.git
+**/.env
+**/.env.*
+**/.ruff_cache
+**/.pytest_cache
+# Not needed to build the web image.
+api
+mobile

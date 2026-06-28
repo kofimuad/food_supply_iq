@@ -2,6 +2,7 @@
 
 from functools import lru_cache
 
+from pydantic import field_validator
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -28,6 +29,19 @@ class Settings(BaseSettings):
     # field day without a refresh; refresh tokens are long-lived for the same reason.
     access_token_expire_minutes: int = 60 * 12  # 12 hours
     refresh_token_expire_days: int = 90
+
+    @field_validator("database_url")
+    @classmethod
+    def _ensure_asyncpg_driver(cls, v: str) -> str:
+        # Railway's managed Postgres hands out a `postgresql://` (or legacy
+        # `postgres://`) URL; SQLAlchemy's async engine needs the asyncpg driver.
+        if v.startswith("postgresql+"):
+            return v
+        if v.startswith("postgresql://"):
+            return v.replace("postgresql://", "postgresql+asyncpg://", 1)
+        if v.startswith("postgres://"):
+            return v.replace("postgres://", "postgresql+asyncpg://", 1)
+        return v
 
 
 @lru_cache
