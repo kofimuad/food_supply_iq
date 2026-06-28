@@ -20,7 +20,13 @@ class Settings(BaseSettings):
     redis_url: str = "redis://localhost:6380/0"
 
     # CORS origins for the web dashboard / mobile dev client.
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:8081"]
+    # NOTE: list the WEB frontend origin(s) here, with NO trailing slash. Override
+    # in production via the CORS_ORIGINS env var.
+    cors_origins: list[str] = [
+        "http://localhost:3000",
+        "http://localhost:8081",
+        "https://api-production-19cc.up.railway.app",
+    ]
 
     # --- Auth / JWT (Story 0.3) ---
     jwt_secret: str = "dev-insecure-change-me-0123456789abcdef"
