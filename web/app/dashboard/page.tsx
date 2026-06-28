@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
@@ -39,6 +40,12 @@ export default function DashboardPage() {
           </Button>
         </div>
       </header>
+
+      <nav className="flex gap-3">
+        <Link href="/accounts">
+          <Button variant="outline">Accounts</Button>
+        </Link>
+      </nav>
 
       <Card>
         <CardContent className="pt-6">

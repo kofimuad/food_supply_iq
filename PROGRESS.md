@@ -21,7 +21,10 @@ session can resume from here. See the architecture/backlog brief for full ACs,
 - [x] 1.1 Add & categorize accounts — backend CRUD + geocoding + filters
       (`app/routers/accounts.py`, `app/schemas/account.py`, `app/services/geocoding.py`,
       `app/utils/geo.py`; rep-scoped; 15 tests; types in `@fsiq/api-types`)
-- [ ] 1.1 Accounts UI (web): form + table
+- [x] 1.1 Accounts UI (web): form + table
+      (`/accounts` page: filters by category/status/search, create+edit form,
+      delete; `lib/use-accounts.ts` TanStack Query hooks; `RequireAuth` guard;
+      dashboard links to it)
 - [ ] 1.2 Account profile, history & status (endpoint + web page + mobile read-only)
 - [ ] 1.3 Attach contacts (CRUD + web editor + mobile tap-to-call)
 - [ ] 1.4 Account pipeline status transitions (+ status_history table)
