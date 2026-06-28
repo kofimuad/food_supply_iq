@@ -1,4 +1,9 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000";
+// Strip any trailing slash so `${API_URL}${path}` never produces a double slash
+// (e.g. a NEXT_PUBLIC_API_URL set as "https://host/" -> "https://host//auth/login").
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8000").replace(
+  /\/+$/,
+  "",
+);
 
 export class ApiError extends Error {
   constructor(

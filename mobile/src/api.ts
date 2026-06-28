@@ -1,6 +1,10 @@
 // Base URL the device/emulator uses to reach the FastAPI backend.
 // Android emulator: http://10.0.2.2:8000 ; physical device: your LAN IP.
-export const API_URL = process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8000";
+// Strip any trailing slash so `${API_URL}${path}` never produces a double slash.
+export const API_URL = (process.env.EXPO_PUBLIC_API_URL ?? "http://localhost:8000").replace(
+  /\/+$/,
+  "",
+);
 
 export class ApiError extends Error {
   constructor(
