@@ -25,6 +25,7 @@ class Settings(BaseSettings):
     cors_origins: list[str] = [
         "http://localhost:3000",
         "http://localhost:8081",
+        "https://web-production-a328bf.up.railway.app",
         "https://api-production-19cc.up.railway.app",
     ]
 
