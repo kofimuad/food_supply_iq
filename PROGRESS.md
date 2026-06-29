@@ -29,7 +29,9 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       (`GET /accounts/{id}/profile` → account + contacts + recent visits + counts;
       web `/accounts/[id]` overview/history/contacts tabs; mobile accounts list +
       read-only profile screen w/ tap-to-call. Offline caching deferred to Epic 7.)
-- [ ] 1.3 Attach contacts (CRUD + web editor + mobile tap-to-call)
+- [x] 1.3 Attach contacts — CRUD scoped to account (`routers/contacts.py`,
+      manager-only writes, single-primary enforcement); web inline ContactsEditor
+      on the profile contacts tab; mobile contact list + tap-to-call (from 1.2)
 - [ ] 1.4 Account pipeline status transitions (+ status_history table)
 
 ## Epic 2 — Product Catalog  ⬜ NOT STARTED

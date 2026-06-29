@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { ContactsEditor } from "@/components/contacts-editor";
 import { RequireAuth } from "@/components/require-auth";
 import { Card, CardContent } from "@/components/ui/card";
+import { useAuth } from "@/lib/auth-context";
 import { categoryLabel, statusLabel } from "@/lib/constants";
 import { useAccountProfile } from "@/lib/use-accounts";
 
@@ -20,6 +22,7 @@ export default function AccountProfilePage() {
 
 function ProfileView() {
   const params = useParams<{ id: string }>();
+  const { user } = useAuth();
   const [tab, setTab] = useState<Tab>("overview");
   const { data, isLoading, isError } = useAccountProfile(params.id);
 
@@ -107,32 +110,13 @@ function ProfileView() {
           </ul>
         ))}
 
-      {tab === "contacts" &&
-        (contacts.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No contacts yet.</p>
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {contacts.map((c) => (
-              <li
-                key={c.id}
-                className="flex items-center justify-between rounded-lg border p-3 text-sm"
-              >
-                <div>
-                  <span className="font-medium">{c.name}</span>
-                  {c.is_primary && (
-                    <span className="ml-2 text-xs text-muted-foreground">(primary)</span>
-                  )}
-                  {c.role && <span className="ml-2 text-muted-foreground">· {c.role}</span>}
-                </div>
-                {c.phone && (
-                  <a href={`tel:${c.phone}`} className="text-muted-foreground hover:underline">
-                    {c.phone}
-                  </a>
-                )}
-              </li>
-            ))}
-          </ul>
-        ))}
+      {tab === "contacts" && (
+        <ContactsEditor
+          accountId={account.id}
+          contacts={contacts}
+          editable={user?.role === "manager"}
+        />
+      )}
     </main>
   );
 }

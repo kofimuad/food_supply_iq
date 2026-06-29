@@ -8,6 +8,8 @@ export type {
   AccountStatus,
   AccountUpdate,
   Contact,
+  ContactCreate,
+  ContactUpdate,
   LoginRequest,
   RefreshRequest,
   TokenPair,
