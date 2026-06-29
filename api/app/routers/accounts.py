@@ -1,6 +1,7 @@
 """Account endpoints (Epic 1, Stories 1.1–1.2)."""
 
 import uuid
+from datetime import UTC, datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query, status
 from geoalchemy2.elements import WKTElement
@@ -9,15 +10,17 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
 from app.deps import get_current_user, is_manager, require_manager
-from app.models import Account, Contact, Order, Sample, User, Visit
+from app.models import Account, AccountStatusHistory, Contact, Order, Sample, User, Visit
 from app.models.enums import AccountCategory, AccountStatus
 from app.schemas.account import AccountCreate, AccountOut, AccountUpdate
 from app.schemas.common import Page
 from app.schemas.contact import ContactOut
 from app.schemas.profile import AccountProfile, ProfileSummary
+from app.schemas.status import StatusChangeRequest, StatusHistoryOut
 from app.schemas.visit import VisitOut
 from app.services.geocoding import geocode
 from app.utils.geo import to_point
+from app.utils.transitions import allowed_next, can_transition
 
 router = APIRouter(prefix="/accounts", tags=["accounts"])
 
@@ -159,6 +162,62 @@ async def account_profile(
             last_visit_at=recent_visits[0].occurred_at if recent_visits else None,
         ),
     )
+
+
+@router.post("/{account_id}/status", response_model=AccountOut)
+async def change_status(
+    account_id: uuid.UUID,
+    body: StatusChangeRequest,
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> AccountOut:
+    """Move an account through the funnel; records who/when in status history.
+
+    Allowed for the assigned rep (or any manager). Validates the transition.
+    """
+    account = await _get_scoped(account_id, db, user)
+
+    if body.status == account.status:
+        raise HTTPException(status_code=400, detail="Account is already in that status")
+    if not can_transition(account.status, body.status):
+        allowed = sorted(s.value for s in allowed_next(account.status))
+        raise HTTPException(
+            status_code=400,
+            detail=f"Cannot move from {account.status.value} to {body.status.value}. "
+            f"Allowed: {', '.join(allowed) or 'none'}",
+        )
+
+    db.add(
+        AccountStatusHistory(
+            account_id=account.id,
+            from_status=account.status,
+            to_status=body.status,
+            changed_by_id=user.id,
+            note=body.note,
+        )
+    )
+    account.status = body.status
+    account.last_verified_at = datetime.now(UTC)
+    await db.commit()
+    await db.refresh(account)
+    return AccountOut.from_model(account)
+
+
+@router.get("/{account_id}/status-history", response_model=list[StatusHistoryOut])
+async def status_history(
+    account_id: uuid.UUID,
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> list[StatusHistoryOut]:
+    await _get_scoped(account_id, db, user)
+    rows = (
+        await db.scalars(
+            select(AccountStatusHistory)
+            .where(AccountStatusHistory.account_id == account_id)
+            .order_by(AccountStatusHistory.changed_at.desc())
+        )
+    ).all()
+    return [StatusHistoryOut.model_validate(r) for r in rows]
 
 
 @router.patch("/{account_id}", response_model=AccountOut)

@@ -17,7 +17,7 @@ session can resume from here. See the architecture/backlog brief for full ACs,
 - [x] 0.4 Shared API contract (`@fsiq/api-types`) + design system
 - [x] 0.5 Railway deploy + EAS config + runbook
 
-## Epic 1 — Accounts & Contacts  🚧 IN PROGRESS
+## Epic 1 — Accounts & Contacts  ✅ COMPLETE
 - [x] 1.1 Add & categorize accounts — backend CRUD + geocoding + filters
       (`app/routers/accounts.py`, `app/schemas/account.py`, `app/services/geocoding.py`,
       `app/utils/geo.py`; rep-scoped; 15 tests; types in `@fsiq/api-types`)
@@ -32,7 +32,11 @@ session can resume from here. See the architecture/backlog brief for full ACs,
 - [x] 1.3 Attach contacts — CRUD scoped to account (`routers/contacts.py`,
       manager-only writes, single-primary enforcement); web inline ContactsEditor
       on the profile contacts tab; mobile contact list + tap-to-call (from 1.2)
-- [ ] 1.4 Account pipeline status transitions (+ status_history table)
+- [x] 1.4 Account pipeline status transitions — `POST /accounts/{id}/status`
+      (validated transitions via `utils/transitions.py`, `account_status_history`
+      table records actor+timestamp+note, updates last_verified_at) +
+      `GET /accounts/{id}/status-history`; web StatusControl on profile; mobile
+      status chips. Offline-queued change deferred to Epic 7.
 
 ## Epic 2 — Product Catalog  ⬜ NOT STARTED
 - [ ] 2.1 Maintain product catalog (CRUD, soft-delete, currency)

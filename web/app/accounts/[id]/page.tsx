@@ -5,6 +5,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { ContactsEditor } from "@/components/contacts-editor";
 import { RequireAuth } from "@/components/require-auth";
+import { StatusControl } from "@/components/status-control";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth-context";
 import { categoryLabel, statusLabel } from "@/lib/constants";
@@ -76,6 +77,11 @@ function ProfileView() {
               value={summary.last_visit_at ? formatDate(summary.last_visit_at) : "—"}
             />
           </div>
+          <Card>
+            <CardContent className="pt-6">
+              <StatusControl accountId={account.id} current={account.status} />
+            </CardContent>
+          </Card>
           <Card>
             <CardContent className="grid gap-3 pt-6 text-sm sm:grid-cols-2">
               <Field label="Address" value={account.address ?? "—"} />

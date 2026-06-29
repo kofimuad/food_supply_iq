@@ -112,6 +112,45 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/accounts/{account_id}/status": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Change Status
+         * @description Move an account through the funnel; records who/when in status history.
+         *
+         *     Allowed for the assigned rep (or any manager). Validates the transition.
+         */
+        post: operations["change_status_accounts__account_id__status_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/accounts/{account_id}/status-history": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Status History */
+        get: operations["status_history_accounts__account_id__status_history_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/accounts/{account_id}/contacts": {
         parameters: {
             query?: never;
@@ -368,6 +407,31 @@ export interface components {
         RefreshRequest: {
             /** Refresh Token */
             refresh_token: string;
+        };
+        /** StatusChangeRequest */
+        StatusChangeRequest: {
+            status: components["schemas"]["AccountStatus"];
+            /** Note */
+            note?: string | null;
+        };
+        /** StatusHistoryOut */
+        StatusHistoryOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            from_status: components["schemas"]["AccountStatus"];
+            to_status: components["schemas"]["AccountStatus"];
+            /** Changed By Id */
+            changed_by_id: string | null;
+            /**
+             * Changed At
+             * Format: date-time
+             */
+            changed_at: string;
+            /** Note */
+            note: string | null;
         };
         /** TokenPair */
         TokenPair: {
@@ -722,6 +786,72 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountProfile"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    change_status_accounts__account_id__status_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["StatusChangeRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    status_history_accounts__account_id__status_history_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["StatusHistoryOut"][];
                 };
             };
             /** @description Validation Error */

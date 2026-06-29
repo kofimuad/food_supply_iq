@@ -164,6 +164,51 @@ async def test_profile_rep_scoped(client, manager, rep):
     assert (await client.get(f"/accounts/{acc_id}/profile", headers=rep_headers)).status_code == 404
 
 
+async def test_status_transition_valid_and_history(client, manager):
+    _, headers = manager
+    # starts as lead
+    acc_id = (await client.post("/accounts", json=_payload(), headers=headers)).json()["id"]
+
+    r = await client.post(
+        f"/accounts/{acc_id}/status",
+        json={"status": "in_discussion", "note": "called"},
+        headers=headers,
+    )
+    assert r.status_code == 200, r.text
+    assert r.json()["status"] == "in_discussion"
+
+    hist = (await client.get(f"/accounts/{acc_id}/status-history", headers=headers)).json()
+    assert len(hist) == 1
+    assert hist[0]["from_status"] == "lead" and hist[0]["to_status"] == "in_discussion"
+    assert hist[0]["note"] == "called" and hist[0]["changed_by_id"] is not None
+
+
+async def test_status_transition_invalid_rejected(client, manager):
+    _, headers = manager
+    acc_id = (await client.post("/accounts", json=_payload(), headers=headers)).json()["id"]
+    # lead -> repeat is not allowed
+    r = await client.post(f"/accounts/{acc_id}/status", json={"status": "repeat"}, headers=headers)
+    assert r.status_code == 400
+    # no-op to same status also rejected
+    same = await client.post(f"/accounts/{acc_id}/status", json={"status": "lead"}, headers=headers)
+    assert same.status_code == 400
+
+
+async def test_status_change_by_assigned_rep(client, manager, rep):
+    _, m_headers = manager
+    rep_user, rep_headers = rep
+    acc_id = (
+        await client.post(
+            "/accounts", json=_payload(assigned_rep_id=str(rep_user.id)), headers=m_headers
+        )
+    ).json()["id"]
+    # the assigned rep can advance their own account
+    r = await client.post(
+        f"/accounts/{acc_id}/status", json={"status": "sampled"}, headers=rep_headers
+    )
+    assert r.status_code == 200 and r.json()["status"] == "sampled"
+
+
 async def test_update_and_delete(client, manager):
     _, headers = manager
     acc_id = (await client.post("/accounts", json=_payload(), headers=headers)).json()["id"]

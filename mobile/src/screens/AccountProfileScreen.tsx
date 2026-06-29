@@ -1,7 +1,8 @@
 import { StatusBar } from "expo-status-bar";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import {
   ActivityIndicator,
+  Alert,
   Linking,
   Pressable,
   ScrollView,
@@ -9,9 +10,18 @@ import {
   Text,
   View,
 } from "react-native";
-import { fetchProfile } from "../accounts";
+import { changeStatus, fetchProfile } from "../accounts";
 import { colors, fontSize, radius, spacing } from "../theme";
-import type { AccountProfile } from "../types";
+import type { AccountProfile, AccountStatus } from "../types";
+
+const STATUSES: AccountStatus[] = [
+  "lead",
+  "in_discussion",
+  "sampled",
+  "trial",
+  "repeat",
+  "not_interested",
+];
 
 interface Props {
   accountId: string;
@@ -22,11 +32,28 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
   const [profile, setProfile] = useState<AccountProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
+  const load = useCallback(() => {
     fetchProfile(accountId)
       .then(setProfile)
       .catch((e) => setError(e instanceof Error ? e.message : "Failed to load"));
   }, [accountId]);
+
+  useEffect(load, [load]);
+
+  function onChangeStatus(status: AccountStatus) {
+    Alert.alert("Change status", `Move this account to "${status}"?`, [
+      { text: "Cancel", style: "cancel" },
+      {
+        text: "Confirm",
+        onPress: () =>
+          changeStatus(accountId, status)
+            .then(load)
+            .catch((e) =>
+              Alert.alert("Could not change status", e instanceof Error ? e.message : "Failed"),
+            ),
+      },
+    ]);
+  }
 
   return (
     <View style={styles.container}>
@@ -55,6 +82,16 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
             <Stat label="Samples" value={profile.summary.samples} />
             <Stat label="Orders" value={profile.summary.orders} />
           </View>
+
+          <Section title="Change status">
+            <View style={styles.statusRow}>
+              {STATUSES.filter((s) => s !== profile.account.status).map((s) => (
+                <Pressable key={s} style={styles.statusChip} onPress={() => onChangeStatus(s)}>
+                  <Text style={styles.statusChipText}>{s}</Text>
+                </Pressable>
+              ))}
+            </View>
+          </Section>
 
           <Section title={`Contacts (${profile.contacts.length})`}>
             {profile.contacts.length === 0 ? (
@@ -130,6 +167,15 @@ const styles = StyleSheet.create({
   },
   statValue: { fontSize: 20, fontWeight: "600", color: colors.foreground },
   sectionTitle: { fontSize: fontSize.base, fontWeight: "600", color: colors.foreground },
+  statusRow: { flexDirection: "row", flexWrap: "wrap", gap: spacing.sm },
+  statusChip: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.sm,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+  },
+  statusChipText: { color: colors.foreground, fontSize: fontSize.sm },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",

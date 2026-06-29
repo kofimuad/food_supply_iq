@@ -62,6 +62,22 @@ export function useUpdateAccount() {
   });
 }
 
+export function useChangeStatus(id: string) {
+  const { authedFetch } = useAuth();
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: (body: { status: string; note?: string | null }) =>
+      authedFetch<Account>(`/accounts/${id}/status`, {
+        method: "POST",
+        body: JSON.stringify(body),
+      }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["account-profile", id] });
+      qc.invalidateQueries({ queryKey: ["accounts"] });
+    },
+  });
+}
+
 export function useDeleteAccount() {
   const { authedFetch } = useAuth();
   const qc = useQueryClient();

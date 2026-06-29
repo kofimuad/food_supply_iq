@@ -16,3 +16,10 @@ export function fetchAccounts(): Promise<Page<Account>> {
 export function fetchProfile(id: string): Promise<AccountProfile> {
   return authedFetch<AccountProfile>(`/accounts/${id}/profile`);
 }
+
+export function changeStatus(id: string, status: string, note?: string): Promise<Account> {
+  return authedFetch<Account>(`/accounts/${id}/status`, {
+    method: "POST",
+    body: JSON.stringify({ status, note: note ?? null }),
+  });
+}

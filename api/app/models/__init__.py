@@ -2,6 +2,7 @@
 (used by Alembic autogenerate and create_all)."""
 
 from app.models.account import Account, Contact
+from app.models.account_status_history import AccountStatusHistory
 from app.models.order import Order, OrderItem
 from app.models.product import Product
 from app.models.sample import Sample, SampleItem
@@ -10,6 +11,7 @@ from app.models.visit import Visit
 
 __all__ = [
     "Account",
+    "AccountStatusHistory",
     "Contact",
     "Order",
     "OrderItem",
