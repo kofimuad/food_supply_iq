@@ -1,15 +1,19 @@
 import { StatusBar } from "expo-status-bar";
 import { useEffect, useState } from "react";
-import { ActivityIndicator, Pressable, StyleSheet, Text, TextInput, View } from "react-native";
-import { bootstrap, clearTokens, login } from "./src/auth";
-import { colors, fontSize, radius, spacing } from "./src/theme";
+import { ActivityIndicator, View } from "react-native";
+import { bootstrap, clearTokens } from "./src/auth";
+import { AccountProfileScreen } from "./src/screens/AccountProfileScreen";
+import { HomeScreen } from "./src/screens/HomeScreen";
+import { LoginScreen } from "./src/screens/LoginScreen";
 import type { User } from "./src/types";
 
-type Status = "loading" | "anon" | "authed";
+type AuthStatus = "loading" | "anon" | "authed";
+type Route = { name: "home" } | { name: "profile"; accountId: string };
 
 export default function App() {
-  const [status, setStatus] = useState<Status>("loading");
+  const [status, setStatus] = useState<AuthStatus>("loading");
   const [user, setUser] = useState<User | null>(null);
+  const [route, setRoute] = useState<Route>({ name: "home" });
 
   useEffect(() => {
     bootstrap().then((u) => {
@@ -20,6 +24,7 @@ export default function App() {
 
   function onAuthed(u: User) {
     setUser(u);
+    setRoute({ name: "home" });
     setStatus("authed");
   }
 
@@ -31,133 +36,30 @@ export default function App() {
 
   if (status === "loading") {
     return (
-      <View style={styles.center}>
+      <View
+        style={{ flex: 1, alignItems: "center", justifyContent: "center", backgroundColor: "#fff" }}
+      >
         <ActivityIndicator />
         <StatusBar style="auto" />
       </View>
     );
   }
 
-  return status === "authed" && user ? (
-    <HomeScreen user={user} onSignOut={onSignOut} />
-  ) : (
-    <LoginScreen onAuthed={onAuthed} />
-  );
-}
+  if (status !== "authed" || !user) {
+    return <LoginScreen onAuthed={onAuthed} />;
+  }
 
-function LoginScreen({ onAuthed }: { onAuthed: (u: User) => void }) {
-  const [email, setEmail] = useState("rep.dmv@foodsupplyiq.com");
-  const [password, setPassword] = useState("password123");
-  const [error, setError] = useState<string | null>(null);
-  const [submitting, setSubmitting] = useState(false);
-
-  async function onSubmit() {
-    setError(null);
-    setSubmitting(true);
-    try {
-      onAuthed(await login(email.trim(), password));
-    } catch (err) {
-      setError(err instanceof Error ? err.message : "Login failed");
-    } finally {
-      setSubmitting(false);
-    }
+  if (route.name === "profile") {
+    return (
+      <AccountProfileScreen accountId={route.accountId} onBack={() => setRoute({ name: "home" })} />
+    );
   }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>FoodSupply IQ</Text>
-      <Text style={styles.subtitle}>Field Rep — sign in</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Email"
-        autoCapitalize="none"
-        keyboardType="email-address"
-      />
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Password"
-        secureTextEntry
-      />
-      {error ? <Text style={styles.error}>{error}</Text> : null}
-      <Pressable
-        style={[styles.button, submitting && styles.buttonDisabled]}
-        onPress={onSubmit}
-        disabled={submitting}
-      >
-        <Text style={styles.buttonText}>{submitting ? "Signing in…" : "Sign in"}</Text>
-      </Pressable>
-      <StatusBar style="auto" />
-    </View>
+    <HomeScreen
+      user={user}
+      onSignOut={onSignOut}
+      onOpenAccount={(accountId) => setRoute({ name: "profile", accountId })}
+    />
   );
 }
-
-function HomeScreen({ user, onSignOut }: { user: User; onSignOut: () => void }) {
-  return (
-    <View style={styles.container}>
-      <Text style={styles.title}>FoodSupply IQ</Text>
-      <Text style={styles.subtitle}>
-        {user.full_name} · {user.role}
-      </Text>
-      <Text style={styles.note}>
-        Signed in as {user.email}. Today&apos;s accounts, visits, samples, orders, map &amp; offline
-        sync land in Epics 3–7.
-      </Text>
-      <Pressable style={styles.buttonOutline} onPress={onSignOut}>
-        <Text style={styles.buttonOutlineText}>Sign out</Text>
-      </Pressable>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
-
-const styles = StyleSheet.create({
-  center: {
-    flex: 1,
-    alignItems: "center",
-    justifyContent: "center",
-    backgroundColor: colors.background,
-  },
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    alignItems: "center",
-    justifyContent: "center",
-    padding: spacing.xl,
-    gap: spacing.md,
-  },
-  title: { fontSize: fontSize.title, fontWeight: "600", color: colors.foreground },
-  subtitle: { fontSize: fontSize.lg, color: colors.foreground },
-  note: { fontSize: fontSize.sm, color: colors.muted, textAlign: "center", marginTop: spacing.xs },
-  input: {
-    width: "100%",
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm + 2,
-    fontSize: fontSize.base,
-  },
-  error: { color: colors.destructive, fontSize: fontSize.sm },
-  button: {
-    width: "100%",
-    backgroundColor: colors.primary,
-    borderRadius: radius.md,
-    paddingVertical: spacing.md,
-    alignItems: "center",
-  },
-  buttonDisabled: { opacity: 0.5 },
-  buttonText: { color: colors.primaryForeground, fontWeight: "600" },
-  buttonOutline: {
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: radius.md,
-    paddingVertical: spacing.sm + 2,
-    paddingHorizontal: spacing.lg + 4,
-    marginTop: spacing.sm,
-  },
-  buttonOutlineText: { color: colors.foreground, fontWeight: "600" },
-});

@@ -411,6 +411,55 @@
         }
       }
     },
+    "/accounts/{account_id}/profile": {
+      "get": {
+        "tags": [
+          "accounts"
+        ],
+        "summary": "Account Profile",
+        "description": "Account overview: details + contacts + recent visit history + activity counts.",
+        "operationId": "account_profile_accounts__account_id__profile_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "account_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Account Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/AccountProfile"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -673,6 +722,38 @@
         ],
         "title": "AccountOut"
       },
+      "AccountProfile": {
+        "properties": {
+          "account": {
+            "$ref": "#/components/schemas/AccountOut"
+          },
+          "contacts": {
+            "items": {
+              "$ref": "#/components/schemas/ContactOut"
+            },
+            "type": "array",
+            "title": "Contacts"
+          },
+          "recent_visits": {
+            "items": {
+              "$ref": "#/components/schemas/VisitOut"
+            },
+            "type": "array",
+            "title": "Recent Visits"
+          },
+          "summary": {
+            "$ref": "#/components/schemas/ProfileSummary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "account",
+          "contacts",
+          "recent_visits",
+          "summary"
+        ],
+        "title": "AccountProfile"
+      },
       "AccountStatus": {
         "type": "string",
         "enum": [
@@ -785,6 +866,60 @@
         "type": "object",
         "title": "AccountUpdate"
       },
+      "ContactOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "account_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Account Id"
+          },
+          "name": {
+            "type": "string",
+            "title": "Name"
+          },
+          "role": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Role"
+          },
+          "phone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phone"
+          },
+          "is_primary": {
+            "type": "boolean",
+            "title": "Is Primary"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "account_id",
+          "name",
+          "role",
+          "phone",
+          "is_primary"
+        ],
+        "title": "ContactOut"
+      },
       "HTTPValidationError": {
         "properties": {
           "detail": {
@@ -847,6 +982,42 @@
           "offset"
         ],
         "title": "Page[AccountOut]"
+      },
+      "ProfileSummary": {
+        "properties": {
+          "visits": {
+            "type": "integer",
+            "title": "Visits"
+          },
+          "samples": {
+            "type": "integer",
+            "title": "Samples"
+          },
+          "orders": {
+            "type": "integer",
+            "title": "Orders"
+          },
+          "last_visit_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Visit At"
+          }
+        },
+        "type": "object",
+        "required": [
+          "visits",
+          "samples",
+          "orders",
+          "last_visit_at"
+        ],
+        "title": "ProfileSummary"
       },
       "RefreshRequest": {
         "properties": {
@@ -965,6 +1136,80 @@
           "type"
         ],
         "title": "ValidationError"
+      },
+      "VisitOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "account_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Account Id"
+          },
+          "rep_id": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "uuid"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Rep Id"
+          },
+          "occurred_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Occurred At"
+          },
+          "outcome": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/VisitOutcome"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "notes": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Notes"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "account_id",
+          "rep_id",
+          "occurred_at",
+          "outcome",
+          "notes"
+        ],
+        "title": "VisitOut"
+      },
+      "VisitOutcome": {
+        "type": "string",
+        "enum": [
+          "no_contact",
+          "interested",
+          "not_interested",
+          "sample_given",
+          "order_placed",
+          "follow_up_needed"
+        ],
+        "title": "VisitOutcome"
       }
     },
     "securitySchemes": {

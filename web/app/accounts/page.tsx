@@ -143,7 +143,11 @@ function AccountsView() {
             <tbody>
               {items.map((a) => (
                 <tr key={a.id} className="border-b last:border-0">
-                  <td className="px-4 py-2 font-medium">{a.name}</td>
+                  <td className="px-4 py-2 font-medium">
+                    <Link href={`/accounts/${a.id}`} className="hover:underline">
+                      {a.name}
+                    </Link>
+                  </td>
                   <td className="px-4 py-2 text-muted-foreground">{categoryLabel(a.category)}</td>
                   <td className="px-4 py-2">{statusLabel(a.status)}</td>
                   <td className="px-4 py-2 text-muted-foreground">{a.address ?? "—"}</td>

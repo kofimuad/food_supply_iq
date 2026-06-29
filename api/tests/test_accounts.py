@@ -143,6 +143,27 @@ async def test_rep_scoping(client, manager, rep):
         await db.commit()
 
 
+async def test_account_profile(client, manager):
+    _, headers = manager
+    acc_id = (await client.post("/accounts", json=_payload(), headers=headers)).json()["id"]
+
+    r = await client.get(f"/accounts/{acc_id}/profile", headers=headers)
+    assert r.status_code == 200, r.text
+    body = r.json()
+    assert body["account"]["id"] == acc_id
+    assert body["contacts"] == []
+    assert body["recent_visits"] == []
+    assert body["summary"] == {"visits": 0, "samples": 0, "orders": 0, "last_visit_at": None}
+
+
+async def test_profile_rep_scoped(client, manager, rep):
+    _, m_headers = manager
+    _, rep_headers = rep
+    acc_id = (await client.post("/accounts", json=_payload(), headers=m_headers)).json()["id"]
+    # Unassigned account is invisible to a rep, including its profile.
+    assert (await client.get(f"/accounts/{acc_id}/profile", headers=rep_headers)).status_code == 404
+
+
 async def test_update_and_delete(client, manager):
     _, headers = manager
     acc_id = (await client.post("/accounts", json=_payload(), headers=headers)).json()["id"]

@@ -92,6 +92,26 @@ export interface paths {
         patch: operations["update_account_accounts__account_id__patch"];
         trace?: never;
     };
+    "/accounts/{account_id}/profile": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Account Profile
+         * @description Account overview: details + contacts + recent visit history + activity counts.
+         */
+        get: operations["account_profile_accounts__account_id__profile_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -193,6 +213,15 @@ export interface components {
              */
             updated_at: string;
         };
+        /** AccountProfile */
+        AccountProfile: {
+            account: components["schemas"]["AccountOut"];
+            /** Contacts */
+            contacts: components["schemas"]["ContactOut"][];
+            /** Recent Visits */
+            recent_visits: components["schemas"]["VisitOut"][];
+            summary: components["schemas"]["ProfileSummary"];
+        };
         /**
          * AccountStatus
          * @description Sample → Trial → Repeat funnel stages (Epic 4).
@@ -215,6 +244,27 @@ export interface components {
             lng?: number | null;
             /** Assigned Rep Id */
             assigned_rep_id?: string | null;
+        };
+        /** ContactOut */
+        ContactOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Account Id
+             * Format: uuid
+             */
+            account_id: string;
+            /** Name */
+            name: string;
+            /** Role */
+            role: string | null;
+            /** Phone */
+            phone: string | null;
+            /** Is Primary */
+            is_primary: boolean;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -241,6 +291,17 @@ export interface components {
             limit: number;
             /** Offset */
             offset: number;
+        };
+        /** ProfileSummary */
+        ProfileSummary: {
+            /** Visits */
+            visits: number;
+            /** Samples */
+            samples: number;
+            /** Orders */
+            orders: number;
+            /** Last Visit At */
+            last_visit_at: string | null;
         };
         /** RefreshRequest */
         RefreshRequest: {
@@ -295,6 +356,34 @@ export interface components {
             /** Context */
             ctx?: Record<string, never>;
         };
+        /** VisitOut */
+        VisitOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Account Id
+             * Format: uuid
+             */
+            account_id: string;
+            /** Rep Id */
+            rep_id: string | null;
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            outcome: components["schemas"]["VisitOutcome"] | null;
+            /** Notes */
+            notes: string | null;
+        };
+        /**
+         * VisitOutcome
+         * @enum {string}
+         */
+        VisitOutcome: "no_contact" | "interested" | "not_interested" | "sample_given" | "order_placed" | "follow_up_needed";
     };
     responses: never;
     parameters: never;
@@ -541,6 +630,37 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    account_profile_accounts__account_id__profile_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountProfile"];
                 };
             };
             /** @description Validation Error */

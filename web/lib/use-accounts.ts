@@ -2,7 +2,7 @@
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "./auth-context";
-import type { Account, AccountCreate, AccountUpdate } from "./types";
+import type { Account, AccountCreate, AccountProfile, AccountUpdate } from "./types";
 
 export interface AccountFilters {
   category?: string;
@@ -31,6 +31,14 @@ export function useAccounts(filters: AccountFilters) {
   return useQuery({
     queryKey: ["accounts", filters],
     queryFn: () => authedFetch<AccountsPage>(`/accounts${toQuery(filters)}`),
+  });
+}
+
+export function useAccountProfile(id: string) {
+  const { authedFetch } = useAuth();
+  return useQuery({
+    queryKey: ["account-profile", id],
+    queryFn: () => authedFetch<AccountProfile>(`/accounts/${id}/profile`),
   });
 }
 

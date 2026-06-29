@@ -25,7 +25,10 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       (`/accounts` page: filters by category/status/search, create+edit form,
       delete; `lib/use-accounts.ts` TanStack Query hooks; `RequireAuth` guard;
       dashboard links to it)
-- [ ] 1.2 Account profile, history & status (endpoint + web page + mobile read-only)
+- [x] 1.2 Account profile, history & status
+      (`GET /accounts/{id}/profile` → account + contacts + recent visits + counts;
+      web `/accounts/[id]` overview/history/contacts tabs; mobile accounts list +
+      read-only profile screen w/ tap-to-call. Offline caching deferred to Epic 7.)
 - [ ] 1.3 Attach contacts (CRUD + web editor + mobile tap-to-call)
 - [ ] 1.4 Account pipeline status transitions (+ status_history table)
 

@@ -9,10 +9,13 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.db import get_session
 from app.deps import get_current_user, is_manager, require_manager
-from app.models import Account, User
+from app.models import Account, Contact, Order, Sample, User, Visit
 from app.models.enums import AccountCategory, AccountStatus
 from app.schemas.account import AccountCreate, AccountOut, AccountUpdate
 from app.schemas.common import Page
+from app.schemas.contact import ContactOut
+from app.schemas.profile import AccountProfile, ProfileSummary
+from app.schemas.visit import VisitOut
 from app.services.geocoding import geocode
 from app.utils.geo import to_point
 
@@ -111,6 +114,51 @@ async def get_account(
     user: User = Depends(get_current_user),
 ) -> AccountOut:
     return AccountOut.from_model(await _get_scoped(account_id, db, user))
+
+
+@router.get("/{account_id}/profile", response_model=AccountProfile)
+async def account_profile(
+    account_id: uuid.UUID,
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> AccountProfile:
+    """Account overview: details + contacts + recent visit history + activity counts."""
+    account = await _get_scoped(account_id, db, user)
+
+    contacts = (
+        await db.scalars(
+            select(Contact)
+            .where(Contact.account_id == account_id)
+            .order_by(Contact.is_primary.desc(), Contact.name)
+        )
+    ).all()
+    recent_visits = (
+        await db.scalars(
+            select(Visit)
+            .where(Visit.account_id == account_id)
+            .order_by(Visit.occurred_at.desc())
+            .limit(20)
+        )
+    ).all()
+
+    def _count(model) -> int:
+        return select(func.count()).select_from(model).where(model.account_id == account_id)
+
+    visits_total = await db.scalar(_count(Visit))
+    samples_total = await db.scalar(_count(Sample))
+    orders_total = await db.scalar(_count(Order))
+
+    return AccountProfile(
+        account=AccountOut.from_model(account),
+        contacts=[ContactOut.model_validate(c) for c in contacts],
+        recent_visits=[VisitOut.model_validate(v) for v in recent_visits],
+        summary=ProfileSummary(
+            visits=visits_total or 0,
+            samples=samples_total or 0,
+            orders=orders_total or 0,
+            last_visit_at=recent_visits[0].occurred_at if recent_visits else None,
+        ),
+    )
 
 
 @router.patch("/{account_id}", response_model=AccountOut)

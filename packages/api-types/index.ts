@@ -17,3 +17,6 @@ export type AccountCreate = Schemas["AccountCreate"];
 export type AccountUpdate = Schemas["AccountUpdate"];
 export type AccountCategory = Schemas["AccountCategory"];
 export type AccountStatus = Schemas["AccountStatus"];
+export type AccountProfile = Schemas["AccountProfile"];
+export type Contact = Schemas["ContactOut"];
+export type Visit = Schemas["VisitOut"];
