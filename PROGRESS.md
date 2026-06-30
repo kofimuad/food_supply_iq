@@ -63,7 +63,10 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       validates products); mobile SampleForm with cached product picker
       (`src/products.ts` session cache); samples surface in web activity feed +
       profile sample count. 3 tests.
-- [ ] 4.2 Trial order · [ ] 4.3 Repeat orders · [ ] 4.4 Sample→Trial→Repeat funnel
+- [x] 4.2 Trial order — `routers/orders.py` (POST/list, computes total from
+      catalog prices w/ unit-price snapshot, optional sample link, rep-scoped);
+      mobile OrderForm (trial) with live total; orders in activity feed + counts.
+- [ ] 4.3 Repeat orders · [ ] 4.4 Sample→Trial→Repeat funnel
 
 ## Epic 5 — Map & Territory  ⬜
 - [ ] 5.1 Rep accounts on map · [ ] 5.2 Manager clusters/coverage

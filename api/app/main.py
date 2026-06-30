@@ -13,6 +13,7 @@ from app.routers import (
     activity,
     auth,
     contacts,
+    orders,
     products,
     samples,
     users,
@@ -47,6 +48,7 @@ app.include_router(visits.router)
 app.include_router(users.router)
 app.include_router(activity.router)
 app.include_router(samples.router)
+app.include_router(orders.router)
 
 
 @app.get("/health", tags=["meta"])

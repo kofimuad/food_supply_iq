@@ -36,3 +36,6 @@ export type ActivityFeed = Schemas["ActivityFeed"];
 
 export type Sample = Schemas["SampleOut"];
 export type SampleCreate = Schemas["SampleCreate"];
+export type Order = Schemas["OrderOut"];
+export type OrderCreate = Schemas["OrderCreate"];
+export type OrderType = Schemas["OrderType"];

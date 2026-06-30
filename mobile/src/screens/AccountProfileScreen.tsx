@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { changeStatus, fetchProfile, logVisit } from "../accounts";
+import { OrderForm } from "../components/OrderForm";
 import { SampleForm } from "../components/SampleForm";
 import { uploadPhoto } from "../media";
 import { colors, fontSize, radius, spacing } from "../theme";
@@ -61,6 +62,7 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
   const [notes, setNotes] = useState("");
   const [checkingIn, setCheckingIn] = useState(false);
   const [showSample, setShowSample] = useState(false);
+  const [orderForm, setOrderForm] = useState<"trial" | "repeat" | null>(null);
 
   const load = useCallback(() => {
     fetchProfile(accountId)
@@ -208,6 +210,28 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
               <Pressable style={styles.outline} onPress={() => setShowSample(true)}>
                 <Text style={styles.outlineText}>+ Sample</Text>
               </Pressable>
+            )}
+          </Section>
+
+          <Section title="Log an order">
+            {orderForm ? (
+              <OrderForm
+                accountId={accountId}
+                orderType={orderForm}
+                onDone={() => {
+                  setOrderForm(null);
+                  load();
+                }}
+              />
+            ) : (
+              <View style={styles.statusRow}>
+                <Pressable style={styles.outline} onPress={() => setOrderForm("trial")}>
+                  <Text style={styles.outlineText}>+ Trial order</Text>
+                </Pressable>
+                <Pressable style={styles.outline} onPress={() => setOrderForm("repeat")}>
+                  <Text style={styles.outlineText}>+ Repeat order</Text>
+                </Pressable>
+              </View>
             )}
           </Section>
 

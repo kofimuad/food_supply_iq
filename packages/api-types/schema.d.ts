@@ -375,6 +375,24 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/accounts/{account_id}/orders": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Orders */
+        get: operations["list_orders_accounts__account_id__orders_get"];
+        put?: never;
+        /** Create Order */
+        post: operations["create_order_accounts__account_id__orders_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -634,6 +652,81 @@ export interface components {
             /** View Url */
             view_url: string;
         };
+        /** OrderCreate */
+        OrderCreate: {
+            order_type: components["schemas"]["OrderType"];
+            /** Items */
+            items: components["schemas"]["OrderItemIn"][];
+            /** Occurred At */
+            occurred_at?: string | null;
+            /** Sample Id */
+            sample_id?: string | null;
+            /** Visit Id */
+            visit_id?: string | null;
+        };
+        /** OrderItemIn */
+        OrderItemIn: {
+            /**
+             * Product Id
+             * Format: uuid
+             */
+            product_id: string;
+            /**
+             * Quantity
+             * @default 1
+             */
+            quantity: number;
+        };
+        /** OrderItemOut */
+        OrderItemOut: {
+            /**
+             * Product Id
+             * Format: uuid
+             */
+            product_id: string;
+            /** Product Name */
+            product_name: string;
+            /** Quantity */
+            quantity: number;
+            /** Unit Price */
+            unit_price: number;
+        };
+        /** OrderOut */
+        OrderOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Account Id
+             * Format: uuid
+             */
+            account_id: string;
+            /** Rep Id */
+            rep_id: string | null;
+            order_type: components["schemas"]["OrderType"];
+            /** Sample Id */
+            sample_id: string | null;
+            /** Visit Id */
+            visit_id: string | null;
+            /**
+             * Occurred At
+             * Format: date-time
+             */
+            occurred_at: string;
+            /** Total Value */
+            total_value: number;
+            /** Currency */
+            currency: string;
+            /** Items */
+            items: components["schemas"]["OrderItemOut"][];
+        };
+        /**
+         * OrderType
+         * @enum {string}
+         */
+        OrderType: "trial" | "repeat";
         /** Page[AccountOut] */
         Page_AccountOut_: {
             /** Items */
@@ -1927,6 +2020,74 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["SampleOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_orders_accounts__account_id__orders_get: {
+        parameters: {
+            query?: {
+                limit?: number;
+            };
+            header?: never;
+            path: {
+                account_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    create_order_accounts__account_id__orders_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                account_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["OrderCreate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["OrderOut"];
                 };
             };
             /** @description Validation Error */
