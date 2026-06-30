@@ -43,9 +43,17 @@ function ProfileView() {
         <Link href="/accounts" className="text-sm text-muted-foreground hover:underline">
           ← Back to accounts
         </Link>
-        <h1 className="mt-1 text-2xl font-semibold tracking-tight">{account.name}</h1>
+        <h1 className="mt-1 text-2xl font-semibold tracking-tight">
+          {account.name}
+          {account.is_repeating && (
+            <span className="ml-2 align-middle rounded bg-secondary px-2 py-0.5 text-xs font-medium text-muted-foreground">
+              Repeating
+            </span>
+          )}
+        </h1>
         <p className="text-sm text-muted-foreground">
           {categoryLabel(account.category)} · {statusLabel(account.status)}
+          {account.repeat_order_count > 0 && ` · ${account.repeat_order_count} repeat order(s)`}
         </p>
       </header>
 

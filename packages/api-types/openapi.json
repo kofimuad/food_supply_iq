@@ -2056,6 +2056,26 @@
             ],
             "title": "Assigned Rep Id"
           },
+          "is_repeating": {
+            "type": "boolean",
+            "title": "Is Repeating"
+          },
+          "repeat_order_count": {
+            "type": "integer",
+            "title": "Repeat Order Count"
+          },
+          "last_order_at": {
+            "anyOf": [
+              {
+                "type": "string",
+                "format": "date-time"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Last Order At"
+          },
           "created_at": {
             "type": "string",
             "format": "date-time",
@@ -2079,6 +2099,9 @@
           "notes",
           "last_verified_at",
           "assigned_rep_id",
+          "is_repeating",
+          "repeat_order_count",
+          "last_order_at",
           "created_at",
           "updated_at"
         ],

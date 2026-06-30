@@ -4,7 +4,7 @@ import uuid
 from datetime import datetime
 
 from geoalchemy2 import Geography, WKBElement
-from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, String, Text
+from sqlalchemy import Boolean, DateTime, Enum, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.db import Base
@@ -32,6 +32,16 @@ class Account(UUIDPkMixin, TimestampMixin, Base):
     )
     notes: Mapped[str | None] = mapped_column(Text, nullable=True)
     last_verified_at: Mapped[datetime | None] = mapped_column(
+        DateTime(timezone=True), nullable=True
+    )
+
+    # Derived repeat-order metrics (Story 4.3): recomputed on order create and by
+    # a nightly arq job. "Repeating" = the account has placed >= 2 orders.
+    is_repeating: Mapped[bool] = mapped_column(
+        Boolean, default=False, nullable=False, index=True
+    )
+    repeat_order_count: Mapped[int] = mapped_column(Integer, default=0, nullable=False)
+    last_order_at: Mapped[datetime | None] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
 

@@ -12,6 +12,7 @@ from app.db import get_session
 from app.deps import get_current_user, is_manager
 from app.models import Account, Order, OrderItem, Product, User
 from app.schemas.order import OrderCreate, OrderItemOut, OrderOut
+from app.services.metrics import recompute_account_order_metrics
 
 router = APIRouter(tags=["orders"])
 
@@ -101,6 +102,11 @@ async def create_order(
 
     db.add(order)
     await db.commit()
+
+    # Refresh the account's repeat metrics right away.
+    await recompute_account_order_metrics(db, account_id)
+    await db.commit()
+
     return await _order_out(db, order.id)
 
 

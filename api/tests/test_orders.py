@@ -116,3 +116,29 @@ async def test_repeat_order_type(client, manager):
     )
     assert r.status_code == 201
     assert r.json()["order_type"] == "repeat" and r.json()["total_value"] == 24.0
+
+
+async def test_repeat_metrics_flag_after_two_orders(client, manager):
+    _, headers = manager
+    acc_id = await _account(client, headers)
+    p1 = await _product(client, headers, "Garri", 10.0)
+
+    def order(kind):
+        return client.post(
+            f"/accounts/{acc_id}/orders",
+            json={"order_type": kind, "items": [{"product_id": p1, "quantity": 1}]},
+            headers=headers,
+        )
+
+    # one order → not yet repeating
+    await order("trial")
+    acc = (await client.get(f"/accounts/{acc_id}", headers=headers)).json()
+    assert acc["is_repeating"] is False
+    assert acc["repeat_order_count"] == 0
+    assert acc["last_order_at"] is not None
+
+    # second order (a repeat) → flagged repeating, repeat count = 1
+    await order("repeat")
+    acc = (await client.get(f"/accounts/{acc_id}", headers=headers)).json()
+    assert acc["is_repeating"] is True
+    assert acc["repeat_order_count"] == 1

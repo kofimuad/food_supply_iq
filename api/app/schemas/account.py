@@ -46,6 +46,9 @@ class AccountOut(BaseModel):
     notes: str | None
     last_verified_at: datetime | None
     assigned_rep_id: uuid.UUID | None
+    is_repeating: bool
+    repeat_order_count: int
+    last_order_at: datetime | None
     created_at: datetime
     updated_at: datetime
 
@@ -63,6 +66,9 @@ class AccountOut(BaseModel):
             notes=a.notes,
             last_verified_at=a.last_verified_at,
             assigned_rep_id=a.assigned_rep_id,
+            is_repeating=a.is_repeating,
+            repeat_order_count=a.repeat_order_count,
+            last_order_at=a.last_order_at,
             created_at=a.created_at,
             updated_at=a.updated_at,
         )

@@ -147,6 +147,11 @@ function AccountsView() {
                     <Link href={`/accounts/${a.id}`} className="hover:underline">
                       {a.name}
                     </Link>
+                    {a.is_repeating && (
+                      <span className="ml-2 rounded bg-secondary px-1.5 py-0.5 text-xs font-medium text-muted-foreground">
+                        Repeating
+                      </span>
+                    )}
                   </td>
                   <td className="px-4 py-2 text-muted-foreground">{categoryLabel(a.category)}</td>
                   <td className="px-4 py-2">{statusLabel(a.status)}</td>

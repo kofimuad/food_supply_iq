@@ -483,6 +483,12 @@ export interface components {
             last_verified_at: string | null;
             /** Assigned Rep Id */
             assigned_rep_id: string | null;
+            /** Is Repeating */
+            is_repeating: boolean;
+            /** Repeat Order Count */
+            repeat_order_count: number;
+            /** Last Order At */
+            last_order_at: string | null;
             /**
              * Created At
              * Format: date-time
