@@ -2052,6 +2052,138 @@
         }
       }
     },
+    "/geo/accounts/nearby": {
+      "get": {
+        "tags": [
+          "geo"
+        ],
+        "summary": "Nearby Accounts",
+        "description": "Accounts within `radius_m` metres of a point (rep 'near me'). Rep-scoped.",
+        "operationId": "nearby_accounts_geo_accounts_nearby_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "lat",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 90,
+              "minimum": -90,
+              "title": "Lat"
+            }
+          },
+          {
+            "name": "lng",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "number",
+              "maximum": 180,
+              "minimum": -180,
+              "title": "Lng"
+            }
+          },
+          {
+            "name": "radius_m",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 200000,
+              "minimum": 1,
+              "default": 5000,
+              "title": "Radius M"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccountOut"
+                  },
+                  "title": "Response Nearby Accounts Geo Accounts Nearby Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/geo/accounts/clusters": {
+      "get": {
+        "tags": [
+          "geo"
+        ],
+        "summary": "Account Clusters",
+        "description": "Grid rollup of geocoded accounts into area cells (manager territory view).\n\n`precision` is decimal places to snap to: 1 ~= 11 km cells, 2 ~= 1.1 km.",
+        "operationId": "account_clusters_geo_accounts_clusters_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "precision",
+            "in": "query",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "maximum": 4,
+              "minimum": 0,
+              "default": 1,
+              "title": "Precision"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ClusterCell"
+                  },
+                  "title": "Response Account Clusters Geo Accounts Clusters Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/health": {
       "get": {
         "tags": [
@@ -2592,6 +2724,30 @@
           "key"
         ],
         "title": "AttachMediaRequest"
+      },
+      "ClusterCell": {
+        "properties": {
+          "lat": {
+            "type": "number",
+            "title": "Lat"
+          },
+          "lng": {
+            "type": "number",
+            "title": "Lng"
+          },
+          "count": {
+            "type": "integer",
+            "title": "Count"
+          }
+        },
+        "type": "object",
+        "required": [
+          "lat",
+          "lng",
+          "count"
+        ],
+        "title": "ClusterCell",
+        "description": "An aggregated area of accounts (grid rollup) for the territory map."
       },
       "ContactCreate": {
         "properties": {

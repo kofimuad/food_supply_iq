@@ -427,6 +427,48 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/geo/accounts/nearby": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Nearby Accounts
+         * @description Accounts within `radius_m` metres of a point (rep 'near me'). Rep-scoped.
+         */
+        get: operations["nearby_accounts_geo_accounts_nearby_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/geo/accounts/clusters": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /**
+         * Account Clusters
+         * @description Grid rollup of geocoded accounts into area cells (manager territory view).
+         *
+         *     `precision` is decimal places to snap to: 1 ~= 11 km cells, 2 ~= 1.1 km.
+         */
+        get: operations["account_clusters_geo_accounts_clusters_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -608,6 +650,18 @@ export interface components {
             key: string;
             /** Content Type */
             content_type?: string | null;
+        };
+        /**
+         * ClusterCell
+         * @description An aggregated area of accounts (grid rollup) for the territory map.
+         */
+        ClusterCell: {
+            /** Lat */
+            lat: number;
+            /** Lng */
+            lng: number;
+            /** Count */
+            count: number;
         };
         /** ContactCreate */
         ContactCreate: {
@@ -2208,6 +2262,70 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["AccountOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    nearby_accounts_geo_accounts_nearby_get: {
+        parameters: {
+            query: {
+                lat: number;
+                lng: number;
+                radius_m?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    account_clusters_geo_accounts_clusters_get: {
+        parameters: {
+            query?: {
+                precision?: number;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ClusterCell"][];
                 };
             };
             /** @description Validation Error */

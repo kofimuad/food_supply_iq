@@ -14,6 +14,7 @@ from app.routers import (
     auth,
     contacts,
     funnel,
+    geo,
     orders,
     products,
     samples,
@@ -51,6 +52,7 @@ app.include_router(activity.router)
 app.include_router(samples.router)
 app.include_router(orders.router)
 app.include_router(funnel.router)
+app.include_router(geo.router)
 
 
 @app.get("/health", tags=["meta"])

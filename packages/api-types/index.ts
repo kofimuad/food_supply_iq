@@ -40,3 +40,4 @@ export type Order = Schemas["OrderOut"];
 export type OrderCreate = Schemas["OrderCreate"];
 export type OrderType = Schemas["OrderType"];
 export type FunnelStage = Schemas["FunnelStage"];
+export type ClusterCell = Schemas["ClusterCell"];
