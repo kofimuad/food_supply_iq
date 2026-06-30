@@ -154,7 +154,7 @@ async def account_profile(
     return AccountProfile(
         account=AccountOut.from_model(account),
         contacts=[ContactOut.model_validate(c) for c in contacts],
-        recent_visits=[VisitOut.model_validate(v) for v in recent_visits],
+        recent_visits=[VisitOut.from_model(v) for v in recent_visits],
         summary=ProfileSummary(
             visits=visits_total or 0,
             samples=samples_total or 0,

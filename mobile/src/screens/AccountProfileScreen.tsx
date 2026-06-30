@@ -1,3 +1,4 @@
+import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
 import {
@@ -8,11 +9,12 @@ import {
   ScrollView,
   StyleSheet,
   Text,
+  TextInput,
   View,
 } from "react-native";
-import { changeStatus, fetchProfile } from "../accounts";
+import { changeStatus, fetchProfile, logVisit } from "../accounts";
 import { colors, fontSize, radius, spacing } from "../theme";
-import type { AccountProfile, AccountStatus } from "../types";
+import type { AccountProfile, AccountStatus, VisitOutcome } from "../types";
 
 const STATUSES: AccountStatus[] = [
   "lead",
@@ -23,6 +25,27 @@ const STATUSES: AccountStatus[] = [
   "not_interested",
 ];
 
+const OUTCOMES: VisitOutcome[] = [
+  "interested",
+  "not_interested",
+  "sample_given",
+  "order_placed",
+  "follow_up_needed",
+  "no_contact",
+];
+
+/** Best-effort GPS: returns coords if permission is granted, else null. */
+async function getCoords(): Promise<{ lat: number; lng: number } | null> {
+  try {
+    const { status } = await Location.requestForegroundPermissionsAsync();
+    if (status !== "granted") return null;
+    const pos = await Location.getCurrentPositionAsync({});
+    return { lat: pos.coords.latitude, lng: pos.coords.longitude };
+  } catch {
+    return null;
+  }
+}
+
 interface Props {
   accountId: string;
   onBack: () => void;
@@ -31,6 +54,9 @@ interface Props {
 export function AccountProfileScreen({ accountId, onBack }: Props) {
   const [profile, setProfile] = useState<AccountProfile | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [outcome, setOutcome] = useState<VisitOutcome | null>(null);
+  const [notes, setNotes] = useState("");
+  const [checkingIn, setCheckingIn] = useState(false);
 
   const load = useCallback(() => {
     fetchProfile(accountId)
@@ -39,6 +65,27 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
   }, [accountId]);
 
   useEffect(load, [load]);
+
+  async function onCheckIn() {
+    setCheckingIn(true);
+    try {
+      const coords = await getCoords();
+      await logVisit(accountId, {
+        notes: notes.trim() || null,
+        outcome,
+        lat: coords?.lat ?? null,
+        lng: coords?.lng ?? null,
+      });
+      setNotes("");
+      setOutcome(null);
+      load();
+      Alert.alert("Visit logged", coords ? "Captured your location." : "Logged without location.");
+    } catch (e) {
+      Alert.alert("Could not log visit", e instanceof Error ? e.message : "Failed");
+    } finally {
+      setCheckingIn(false);
+    }
+  }
 
   function onChangeStatus(status: AccountStatus) {
     Alert.alert("Change status", `Move this account to "${status}"?`, [
@@ -91,6 +138,40 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
                 </Pressable>
               ))}
             </View>
+          </Section>
+
+          <Section title="Log a visit">
+            <View style={styles.statusRow}>
+              {OUTCOMES.map((o) => (
+                <Pressable
+                  key={o}
+                  style={[styles.statusChip, outcome === o && styles.statusChipActive]}
+                  onPress={() => setOutcome(outcome === o ? null : o)}
+                >
+                  <Text
+                    style={[styles.statusChipText, outcome === o && styles.statusChipTextActive]}
+                  >
+                    {o}
+                  </Text>
+                </Pressable>
+              ))}
+            </View>
+            <TextInput
+              style={styles.input}
+              value={notes}
+              onChangeText={setNotes}
+              placeholder="Notes (optional)"
+              multiline
+            />
+            <Pressable
+              style={[styles.checkIn, checkingIn && { opacity: 0.5 }]}
+              onPress={onCheckIn}
+              disabled={checkingIn}
+            >
+              <Text style={styles.checkInText}>
+                {checkingIn ? "Checking in…" : "Check in with GPS"}
+              </Text>
+            </Pressable>
           </Section>
 
           <Section title={`Contacts (${profile.contacts.length})`}>
@@ -176,6 +257,23 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.md,
   },
   statusChipText: { color: colors.foreground, fontSize: fontSize.sm },
+  statusChipActive: { backgroundColor: colors.primary, borderColor: colors.primary },
+  statusChipTextActive: { color: colors.primaryForeground },
+  input: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    padding: spacing.md,
+    fontSize: fontSize.base,
+    minHeight: 44,
+  },
+  checkIn: {
+    backgroundColor: colors.primary,
+    borderRadius: radius.md,
+    paddingVertical: spacing.md,
+    alignItems: "center",
+  },
+  checkInText: { color: colors.primaryForeground, fontWeight: "600" },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",

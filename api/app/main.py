@@ -8,7 +8,7 @@ from sqlalchemy import text
 
 from app.config import get_settings
 from app.db import engine
-from app.routers import accounts, auth, contacts, products
+from app.routers import accounts, auth, contacts, products, visits
 
 settings = get_settings()
 
@@ -34,6 +34,7 @@ app.include_router(auth.router)
 app.include_router(accounts.router)
 app.include_router(contacts.router)
 app.include_router(products.router)
+app.include_router(visits.router)
 
 
 @app.get("/health", tags=["meta"])

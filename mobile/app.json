@@ -17,8 +17,17 @@
       "bundleIdentifier": "com.hydra.foodsupplyiq"
     },
     "android": {
-      "package": "com.hydra.foodsupplyiq"
+      "package": "com.hydra.foodsupplyiq",
+      "permissions": ["ACCESS_FINE_LOCATION", "ACCESS_COARSE_LOCATION"]
     },
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationWhenInUsePermission": "FoodSupply IQ uses your location to log where field visits happen."
+        }
+      ]
+    ],
     "extra": {
       "apiUrl": "http://localhost:8000"
     }

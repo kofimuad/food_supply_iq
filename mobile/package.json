@@ -12,6 +12,7 @@
   "dependencies": {
     "@fsiq/api-types": "workspace:*",
     "expo": "~51.0.39",
+    "expo-location": "~17.0.1",
     "expo-secure-store": "~13.0.2",
     "expo-status-bar": "~1.12.1",
     "react": "18.2.0",

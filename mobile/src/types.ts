@@ -11,4 +11,6 @@ export type {
   User,
   UserRole,
   Visit,
+  VisitCreate,
+  VisitOutcome,
 } from "@fsiq/api-types";

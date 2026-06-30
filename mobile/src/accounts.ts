@@ -1,5 +1,5 @@
 import { authedFetch } from "./auth";
-import type { Account, AccountProfile } from "./types";
+import type { Account, AccountProfile, Visit, VisitCreate } from "./types";
 
 interface Page<T> {
   items: T[];
@@ -21,5 +21,12 @@ export function changeStatus(id: string, status: string, note?: string): Promise
   return authedFetch<Account>(`/accounts/${id}/status`, {
     method: "POST",
     body: JSON.stringify({ status, note: note ?? null }),
+  });
+}
+
+export function logVisit(accountId: string, body: VisitCreate): Promise<Visit> {
+  return authedFetch<Visit>(`/accounts/${accountId}/visits`, {
+    method: "POST",
+    body: JSON.stringify(body),
   });
 }
