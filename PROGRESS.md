@@ -58,7 +58,7 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       mobile capture (expo-image-picker, compress, upload); web thumbnail gallery
       on visit history. Prod needs an R2/MinIO bucket + creds (config only).
 
-## Epic 4 — Samples & Orders (core loop)  🚧 IN PROGRESS
+## Epic 4 — Samples & Orders (core loop)  ✅ COMPLETE
 - [x] 4.1 Record sample — `routers/samples.py` (POST/list, product[]+qty, rep-scoped,
       validates products); mobile SampleForm with cached product picker
       (`src/products.ts` session cache); samples surface in web activity feed +
@@ -70,7 +70,10 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       `repeat_order_count` + `last_order_at` (migration w/ server_default);
       recomputed on order create + nightly arq cron (`recompute_repeat_metrics`);
       web "Repeating" badge on account list + profile; mobile "+ Repeat order".
-- [ ] 4.4 Sample→Trial→Repeat funnel
+- [x] 4.4 Sample→Trial→Repeat funnel — `routers/funnel.py` (GET /funnel counts +
+      conversion %, GET /funnel/accounts drill-down, filters rep/date/product,
+      manager-only); web /funnel page (stage bars + filters + drill-down list).
+      Tremol viz deferred — custom bars used (Tremor can come in Epic 6).
 
 ## Epic 5 — Map & Territory  ⬜
 - [ ] 5.1 Rep accounts on map · [ ] 5.2 Manager clusters/coverage

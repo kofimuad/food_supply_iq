@@ -393,6 +393,40 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/funnel": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Funnel */
+        get: operations["funnel_funnel_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/funnel/accounts": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Funnel Accounts */
+        get: operations["funnel_accounts_funnel_accounts_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -620,6 +654,17 @@ export interface components {
             phone?: string | null;
             /** Is Primary */
             is_primary?: boolean | null;
+        };
+        /** FunnelStage */
+        FunnelStage: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Count */
+            count: number;
+            /** Conversion From Prev */
+            conversion_from_prev: number | null;
         };
         /** HTTPValidationError */
         HTTPValidationError: {
@@ -2094,6 +2139,75 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["OrderOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    funnel_funnel_get: {
+        parameters: {
+            query?: {
+                rep_id?: string | null;
+                product_id?: string | null;
+                date_from?: string | null;
+                date_to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["FunnelStage"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    funnel_accounts_funnel_accounts_get: {
+        parameters: {
+            query: {
+                stage: string;
+                rep_id?: string | null;
+                product_id?: string | null;
+                date_from?: string | null;
+                date_to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["AccountOut"][];
                 };
             };
             /** @description Validation Error */

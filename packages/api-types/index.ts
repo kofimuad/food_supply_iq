@@ -39,3 +39,4 @@ export type SampleCreate = Schemas["SampleCreate"];
 export type Order = Schemas["OrderOut"];
 export type OrderCreate = Schemas["OrderCreate"];
 export type OrderType = Schemas["OrderType"];
+export type FunnelStage = Schemas["FunnelStage"];
