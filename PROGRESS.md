@@ -45,11 +45,14 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       reactivate). Mobile cached product picker deferred to Epic 4 (where the
       sample/order flows consume it).
 
-## Epic 3 — Field Visits  🚧 IN PROGRESS
+## Epic 3 — Field Visits  ✅ MVP COMPLETE (3.3 deferred p2)
 - [x] 3.1 Check-in + log visit (mvp) — `routers/visits.py` (POST/list/detail,
       rep-scoped, geo+outcome+notes); mobile check-in with expo-location GPS +
       outcome chips + notes on the profile; web shows visits in profile history.
-- [ ] 3.2 Live activity feed (mvp)
+- [x] 3.2 Live activity feed (mvp) — `routers/activity.py` (unions visits/
+      samples/orders, newest-first, rep filter + before cursor, manager-only);
+      `routers/users.py` (rep list); web ActivityFeed on the manager dashboard
+      with rep filter + 15s auto-refresh.
 - [ ] 3.3 Visit photos (p2 — deferred; needs R2/MinIO)
 
 ## Epic 4 — Samples & Orders (core loop)  ⬜

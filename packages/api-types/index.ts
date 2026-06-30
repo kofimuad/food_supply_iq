@@ -28,3 +28,6 @@ export type VisitOutcome = Schemas["VisitOutcome"];
 export type Product = Schemas["ProductOut"];
 export type ProductCreate = Schemas["ProductCreate"];
 export type ProductUpdate = Schemas["ProductUpdate"];
+
+export type ActivityEvent = Schemas["ActivityEvent"];
+export type ActivityFeed = Schemas["ActivityFeed"];

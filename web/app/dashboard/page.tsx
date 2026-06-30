@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { ActivityFeed } from "@/components/activity-feed";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth-context";
@@ -50,15 +51,17 @@ export default function DashboardPage() {
         </Link>
       </nav>
 
-      <Card>
-        <CardContent className="pt-6">
-          <p className="text-sm text-muted-foreground">
-            You are signed in as <span className="font-medium text-foreground">{user.email}</span>.
-            KPIs, the sample→trial→repeat funnel, the territory map, and the activity feed land in
-            Epics 1–6.
-          </p>
-        </CardContent>
-      </Card>
+      {user.role === "manager" ? (
+        <ActivityFeed />
+      ) : (
+        <Card>
+          <CardContent className="pt-6">
+            <p className="text-sm text-muted-foreground">
+              Signed in as <span className="font-medium text-foreground">{user.email}</span>.
+            </p>
+          </CardContent>
+        </Card>
+      )}
     </main>
   );
 }

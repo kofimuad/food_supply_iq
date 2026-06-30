@@ -3,6 +3,8 @@
 export type {
   Account,
   AccountCategory,
+  ActivityEvent,
+  ActivityFeed,
   AccountCreate,
   AccountProfile,
   AccountStatus,
