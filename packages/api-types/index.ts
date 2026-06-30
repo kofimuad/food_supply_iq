@@ -22,3 +22,7 @@ export type Contact = Schemas["ContactOut"];
 export type ContactCreate = Schemas["ContactCreate"];
 export type ContactUpdate = Schemas["ContactUpdate"];
 export type Visit = Schemas["VisitOut"];
+
+export type Product = Schemas["ProductOut"];
+export type ProductCreate = Schemas["ProductCreate"];
+export type ProductUpdate = Schemas["ProductUpdate"];

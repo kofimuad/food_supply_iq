@@ -38,8 +38,12 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       `GET /accounts/{id}/status-history`; web StatusControl on profile; mobile
       status chips. Offline-queued change deferred to Epic 7.
 
-## Epic 2 — Product Catalog  ⬜ NOT STARTED
-- [ ] 2.1 Maintain product catalog (CRUD, soft-delete, currency)
+## Epic 2 — Product Catalog  ✅ COMPLETE
+- [x] 2.1 Maintain product catalog — backend CRUD (`routers/products.py`,
+      manager-only writes, soft-delete via is_active, currency, search +
+      include_inactive); web `/products` catalog (table + form + deactivate/
+      reactivate). Mobile cached product picker deferred to Epic 4 (where the
+      sample/order flows consume it).
 
 ## Epic 3 — Field Visits  ⬜
 - [ ] 3.1 Check-in + log visit (mvp) · [ ] 3.2 Live activity feed (mvp) · [ ] 3.3 Visit photos (p2)

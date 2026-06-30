@@ -45,6 +45,9 @@ export default function DashboardPage() {
         <Link href="/accounts">
           <Button variant="outline">Accounts</Button>
         </Link>
+        <Link href="/products">
+          <Button variant="outline">Product catalog</Button>
+        </Link>
       </nav>
 
       <Card>
