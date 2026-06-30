@@ -6,15 +6,38 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app.config import get_settings
 from app.db import get_session
 from app.deps import get_current_user, is_manager
-from app.models import Account, User, Visit
+from app.models import Account, User, Visit, VisitMedia
+from app.schemas.media import AttachMediaRequest, MediaOut, PresignRequest, PresignResponse
 from app.schemas.visit import VisitCreate, VisitOut
+from app.services import storage
 from app.utils.geo import to_point
 
 router = APIRouter(tags=["visits"])
 
+settings = get_settings()
 _NOT_FOUND = HTTPException(status_code=status.HTTP_404_NOT_FOUND, detail="Visit not found")
+_STORAGE_OFF = HTTPException(status_code=503, detail="Object storage is not configured")
+
+
+def _media_out(m: VisitMedia) -> MediaOut:
+    return MediaOut(
+        id=m.id,
+        visit_id=m.visit_id,
+        content_type=m.content_type,
+        created_at=m.created_at,
+        view_url=storage.presign_get(m.key),
+    )
+
+
+async def _visit_scoped(visit_id: uuid.UUID, db: AsyncSession, user: User) -> Visit:
+    visit = await db.get(Visit, visit_id)
+    if visit is None:
+        raise _NOT_FOUND
+    await _account_scoped(visit.account_id, db, user)
+    return visit
 
 
 async def _account_scoped(account_id: uuid.UUID, db: AsyncSession, user: User) -> Account:
@@ -84,3 +107,70 @@ async def get_visit(
     # Scope through the owning account.
     await _account_scoped(visit.account_id, db, user)
     return VisitOut.from_model(visit)
+
+
+@router.post("/visits/{visit_id}/media/presign", response_model=PresignResponse)
+async def presign_media_upload(
+    visit_id: uuid.UUID,
+    body: PresignRequest,
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> PresignResponse:
+    """Get a presigned PUT URL; the client uploads the photo straight to storage."""
+    if not settings.storage_enabled:
+        raise _STORAGE_OFF
+    await _visit_scoped(visit_id, db, user)
+    key = storage.build_key(visit_id, body.content_type)
+    return PresignResponse(key=key, upload_url=storage.presign_put(key, body.content_type))
+
+
+@router.post(
+    "/visits/{visit_id}/media", response_model=MediaOut, status_code=status.HTTP_201_CREATED
+)
+async def attach_media(
+    visit_id: uuid.UUID,
+    body: AttachMediaRequest,
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> MediaOut:
+    """Record an uploaded object against the visit (call after the PUT succeeds)."""
+    if not settings.storage_enabled:
+        raise _STORAGE_OFF
+    await _visit_scoped(visit_id, db, user)
+    media = VisitMedia(visit_id=visit_id, key=body.key, content_type=body.content_type)
+    db.add(media)
+    await db.commit()
+    await db.refresh(media)
+    return _media_out(media)
+
+
+@router.get("/visits/{visit_id}/media", response_model=list[MediaOut])
+async def list_media(
+    visit_id: uuid.UUID,
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> list[MediaOut]:
+    await _visit_scoped(visit_id, db, user)
+    rows = (
+        await db.scalars(
+            select(VisitMedia)
+            .where(VisitMedia.visit_id == visit_id)
+            .order_by(VisitMedia.created_at)
+        )
+    ).all()
+    return [_media_out(m) for m in rows]
+
+
+@router.delete("/media/{media_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_media(
+    media_id: uuid.UUID,
+    db: AsyncSession = Depends(get_session),
+    user: User = Depends(get_current_user),
+) -> None:
+    media = await db.get(VisitMedia, media_id)
+    if media is None:
+        raise HTTPException(status_code=404, detail="Media not found")
+    await _visit_scoped(media.visit_id, db, user)
+    storage.delete_object(media.key)
+    await db.delete(media)
+    await db.commit()

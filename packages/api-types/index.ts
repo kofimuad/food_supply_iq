@@ -24,6 +24,8 @@ export type ContactUpdate = Schemas["ContactUpdate"];
 export type Visit = Schemas["VisitOut"];
 export type VisitCreate = Schemas["VisitCreate"];
 export type VisitOutcome = Schemas["VisitOutcome"];
+export type Media = Schemas["MediaOut"];
+export type PresignResponse = Schemas["PresignResponse"];
 
 export type Product = Schemas["ProductOut"];
 export type ProductCreate = Schemas["ProductCreate"];

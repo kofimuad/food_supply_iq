@@ -265,6 +265,64 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/visits/{visit_id}/media/presign": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        /**
+         * Presign Media Upload
+         * @description Get a presigned PUT URL; the client uploads the photo straight to storage.
+         */
+        post: operations["presign_media_upload_visits__visit_id__media_presign_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/visits/{visit_id}/media": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** List Media */
+        get: operations["list_media_visits__visit_id__media_get"];
+        put?: never;
+        /**
+         * Attach Media
+         * @description Record an uploaded object against the visit (call after the PUT succeeds).
+         */
+        post: operations["attach_media_visits__visit_id__media_post"];
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/media/{media_id}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        /** Delete Media */
+        delete: operations["delete_media_media__media_id__delete"];
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/users": {
         parameters: {
             query?: never;
@@ -468,6 +526,13 @@ export interface components {
             /** Next Cursor */
             next_cursor: string | null;
         };
+        /** AttachMediaRequest */
+        AttachMediaRequest: {
+            /** Key */
+            key: string;
+            /** Content Type */
+            content_type?: string | null;
+        };
         /** ContactCreate */
         ContactCreate: {
             /** Name */
@@ -529,6 +594,28 @@ export interface components {
             /** Password */
             password: string;
         };
+        /** MediaOut */
+        MediaOut: {
+            /**
+             * Id
+             * Format: uuid
+             */
+            id: string;
+            /**
+             * Visit Id
+             * Format: uuid
+             */
+            visit_id: string;
+            /** Content Type */
+            content_type: string | null;
+            /**
+             * Created At
+             * Format: date-time
+             */
+            created_at: string;
+            /** View Url */
+            view_url: string;
+        };
         /** Page[AccountOut] */
         Page_AccountOut_: {
             /** Items */
@@ -550,6 +637,26 @@ export interface components {
             limit: number;
             /** Offset */
             offset: number;
+        };
+        /** PresignRequest */
+        PresignRequest: {
+            /**
+             * Content Type
+             * @default image/jpeg
+             */
+            content_type: string;
+        };
+        /** PresignResponse */
+        PresignResponse: {
+            /** Key */
+            key: string;
+            /** Upload Url */
+            upload_url: string;
+            /**
+             * Method
+             * @default PUT
+             */
+            method: string;
         };
         /** ProductCreate */
         ProductCreate: {
@@ -1482,6 +1589,136 @@ export interface operations {
                 content: {
                     "application/json": components["schemas"]["VisitOut"];
                 };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    presign_media_upload_visits__visit_id__media_presign_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["PresignRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["PresignResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    list_media_visits__visit_id__media_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaOut"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    attach_media_visits__visit_id__media_post: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                visit_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["AttachMediaRequest"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            201: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["MediaOut"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    delete_media_media__media_id__delete: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path: {
+                media_id: string;
+            };
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            204: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content?: never;
             };
             /** @description Validation Error */
             422: {

@@ -8,6 +8,7 @@ from app.models.product import Product
 from app.models.sample import Sample, SampleItem
 from app.models.user import User
 from app.models.visit import Visit
+from app.models.visit_media import VisitMedia
 
 __all__ = [
     "Account",
@@ -20,4 +21,5 @@ __all__ = [
     "SampleItem",
     "User",
     "Visit",
+    "VisitMedia",
 ]

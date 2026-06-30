@@ -1229,6 +1229,215 @@
         }
       }
     },
+    "/visits/{visit_id}/media/presign": {
+      "post": {
+        "tags": [
+          "visits"
+        ],
+        "summary": "Presign Media Upload",
+        "description": "Get a presigned PUT URL; the client uploads the photo straight to storage.",
+        "operationId": "presign_media_upload_visits__visit_id__media_presign_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "visit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Visit Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PresignRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/PresignResponse"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/visits/{visit_id}/media": {
+      "post": {
+        "tags": [
+          "visits"
+        ],
+        "summary": "Attach Media",
+        "description": "Record an uploaded object against the visit (call after the PUT succeeds).",
+        "operationId": "attach_media_visits__visit_id__media_post",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "visit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Visit Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/AttachMediaRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MediaOut"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": [
+          "visits"
+        ],
+        "summary": "List Media",
+        "operationId": "list_media_visits__visit_id__media_get",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "visit_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Visit Id"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/MediaOut"
+                  },
+                  "title": "Response List Media Visits  Visit Id  Media Get"
+                }
+              }
+            }
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/media/{media_id}": {
+      "delete": {
+        "tags": [
+          "visits"
+        ],
+        "summary": "Delete Media",
+        "operationId": "delete_media_media__media_id__delete",
+        "security": [
+          {
+            "HTTPBearer": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "media_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid",
+              "title": "Media Id"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Successful Response"
+          },
+          "422": {
+            "description": "Validation Error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/users": {
       "get": {
         "tags": [
@@ -1867,6 +2076,30 @@
         ],
         "title": "ActivityFeed"
       },
+      "AttachMediaRequest": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key"
+        ],
+        "title": "AttachMediaRequest"
+      },
       "ContactCreate": {
         "properties": {
           "name": {
@@ -2051,6 +2284,49 @@
         ],
         "title": "LoginRequest"
       },
+      "MediaOut": {
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Id"
+          },
+          "visit_id": {
+            "type": "string",
+            "format": "uuid",
+            "title": "Visit Id"
+          },
+          "content_type": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Content Type"
+          },
+          "created_at": {
+            "type": "string",
+            "format": "date-time",
+            "title": "Created At"
+          },
+          "view_url": {
+            "type": "string",
+            "title": "View Url"
+          }
+        },
+        "type": "object",
+        "required": [
+          "id",
+          "visit_id",
+          "content_type",
+          "created_at",
+          "view_url"
+        ],
+        "title": "MediaOut"
+      },
       "Page_AccountOut_": {
         "properties": {
           "items": {
@@ -2112,6 +2388,40 @@
           "offset"
         ],
         "title": "Page[ProductOut]"
+      },
+      "PresignRequest": {
+        "properties": {
+          "content_type": {
+            "type": "string",
+            "title": "Content Type",
+            "default": "image/jpeg"
+          }
+        },
+        "type": "object",
+        "title": "PresignRequest"
+      },
+      "PresignResponse": {
+        "properties": {
+          "key": {
+            "type": "string",
+            "title": "Key"
+          },
+          "upload_url": {
+            "type": "string",
+            "title": "Upload Url"
+          },
+          "method": {
+            "type": "string",
+            "title": "Method",
+            "default": "PUT"
+          }
+        },
+        "type": "object",
+        "required": [
+          "key",
+          "upload_url"
+        ],
+        "title": "PresignResponse"
       },
       "ProductCreate": {
         "properties": {

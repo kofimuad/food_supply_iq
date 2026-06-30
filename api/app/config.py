@@ -41,6 +41,21 @@ class Settings(BaseSettings):
     # If unset, account geocoding is skipped gracefully.
     mapbox_token: str | None = None
 
+    # --- S3-compatible storage for visit photos (Epic 3, Story 3.3) ---
+    # Defaults target the local MinIO from docker-compose. In prod set these to
+    # Cloudflare R2 or Railway-MinIO.
+    s3_endpoint: str | None = "http://localhost:9000"
+    s3_access_key: str | None = "minioadmin"
+    s3_secret_key: str | None = "minioadmin"
+    s3_bucket: str = "fsiq-media"
+    s3_region: str = "us-east-1"
+    # Best-effort bucket creation (handy for dev/MinIO; harmless if it lacks perms).
+    s3_auto_create_bucket: bool = True
+
+    @property
+    def storage_enabled(self) -> bool:
+        return bool(self.s3_endpoint and self.s3_access_key and self.s3_secret_key)
+
     @field_validator("database_url")
     @classmethod
     def _ensure_asyncpg_driver(cls, v: str) -> str:
