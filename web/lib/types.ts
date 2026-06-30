@@ -5,6 +5,7 @@ export type {
   AccountCategory,
   ActivityEvent,
   ActivityFeed,
+  ClusterCell,
   FunnelStage,
   AccountCreate,
   AccountProfile,

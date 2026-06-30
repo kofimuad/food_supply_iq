@@ -49,6 +49,9 @@ export default function DashboardPage() {
         <Link href="/products">
           <Button variant="outline">Product catalog</Button>
         </Link>
+        <Link href="/map">
+          <Button variant="outline">Map</Button>
+        </Link>
         {user.role === "manager" && (
           <Link href="/funnel">
             <Button variant="outline">Funnel</Button>

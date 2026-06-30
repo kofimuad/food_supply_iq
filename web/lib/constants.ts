@@ -17,6 +17,17 @@ export const ACCOUNT_STATUSES: { value: AccountStatus; label: string }[] = [
   { value: "not_interested", label: "Not interested" },
 ];
 
+// Marker/legend colors per pipeline status (data viz — distinct from the
+// black-on-white chrome). Keep in sync with ACCOUNT_STATUSES.
+export const STATUS_COLORS: Record<string, string> = {
+  lead: "#9ca3af",
+  in_discussion: "#3b82f6",
+  sampled: "#f59e0b",
+  trial: "#8b5cf6",
+  repeat: "#10b981",
+  not_interested: "#ef4444",
+};
+
 export function categoryLabel(value: string): string {
   return ACCOUNT_CATEGORIES.find((c) => c.value === value)?.label ?? value;
 }

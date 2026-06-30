@@ -75,8 +75,14 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       manager-only); web /funnel page (stage bars + filters + drill-down list).
       Tremol viz deferred — custom bars used (Tremor can come in Epic 6).
 
-## Epic 5 — Map & Territory  ⬜
-- [ ] 5.1 Rep accounts on map · [ ] 5.2 Manager clusters/coverage
+## Epic 5 — Map & Territory  ✅ (web + backend; mobile native map deferred)
+- [x] 5.1 Accounts on map — `GET /geo/accounts/nearby` (ST_DWithin, rep-scoped);
+      web `/map` (MapLibre GL, OSM tiles, no token): status-colored markers +
+      client clustering + popups linking to profiles.
+- [x] 5.2 Manager clusters/coverage — `GET /geo/accounts/clusters` (grid rollup);
+      web area summary panel (status counts + cluster count).
+- [ ] Mobile native map (Mapbox RN) deferred — needs a custom Expo dev build
+      (ties into Epic 7); backend nearby endpoint is ready for it.
 
 ## Epic 6 — Dashboard & KPIs  ⬜
 - [ ] 6.1 Manager KPI dashboard vs target
