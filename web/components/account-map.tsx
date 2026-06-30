@@ -59,6 +59,10 @@ export function AccountMap({ accounts }: { accounts: Account[] }) {
   const containerRef = useRef<HTMLDivElement>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
   const fc = useMemo(() => toGeoJSON(accounts), [accounts]);
+  // Latest data, read inside the (once-only) load handler so it isn't stale if
+  // the accounts arrive after the map mounts.
+  const fcRef = useRef(fc);
+  fcRef.current = fc;
 
   useEffect(() => {
     if (!containerRef.current) return;
@@ -74,7 +78,7 @@ export function AccountMap({ accounts }: { accounts: Account[] }) {
     map.on("load", () => {
       map.addSource("accounts", {
         type: "geojson",
-        data: fc,
+        data: fcRef.current,
         cluster: true,
         clusterRadius: 50,
       });
@@ -140,7 +144,7 @@ export function AccountMap({ accounts }: { accounts: Account[] }) {
       map.on("mouseenter", "unclustered-point", () => (map.getCanvas().style.cursor = "pointer"));
       map.on("mouseleave", "unclustered-point", () => (map.getCanvas().style.cursor = ""));
 
-      fitToData(map, fc);
+      fitToData(map, fcRef.current);
     });
 
     return () => {
