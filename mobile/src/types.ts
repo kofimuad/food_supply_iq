@@ -6,6 +6,8 @@ export type {
   AccountStatus,
   Contact,
   LoginRequest,
+  Media,
+  PresignResponse,
   RefreshRequest,
   TokenPair,
   User,

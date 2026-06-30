@@ -1,3 +1,4 @@
+import * as ImagePicker from "expo-image-picker";
 import * as Location from "expo-location";
 import { StatusBar } from "expo-status-bar";
 import { useCallback, useEffect, useState } from "react";
@@ -13,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { changeStatus, fetchProfile, logVisit } from "../accounts";
+import { uploadPhoto } from "../media";
 import { colors, fontSize, radius, spacing } from "../theme";
 import type { AccountProfile, AccountStatus, VisitOutcome } from "../types";
 
@@ -84,6 +86,23 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
       Alert.alert("Could not log visit", e instanceof Error ? e.message : "Failed");
     } finally {
       setCheckingIn(false);
+    }
+  }
+
+  async function onAddPhoto(visitId: string) {
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) {
+      Alert.alert("Permission needed", "Allow photo access to attach a photo.");
+      return;
+    }
+    const result = await ImagePicker.launchImageLibraryAsync({ quality: 0.5 });
+    if (result.canceled) return;
+    const asset = result.assets[0];
+    try {
+      await uploadPhoto(visitId, asset.uri, asset.mimeType ?? "image/jpeg");
+      Alert.alert("Photo attached");
+    } catch (e) {
+      Alert.alert("Upload failed", e instanceof Error ? e.message : "Try again");
     }
   }
 
@@ -200,8 +219,13 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
             ) : (
               profile.recent_visits.map((v) => (
                 <View key={v.id} style={styles.row}>
-                  <Text style={styles.rowName}>{v.outcome ?? "visit"}</Text>
-                  <Text style={styles.muted}>{new Date(v.occurred_at).toLocaleDateString()}</Text>
+                  <View>
+                    <Text style={styles.rowName}>{v.outcome ?? "visit"}</Text>
+                    <Text style={styles.muted}>{new Date(v.occurred_at).toLocaleDateString()}</Text>
+                  </View>
+                  <Pressable onPress={() => onAddPhoto(v.id)}>
+                    <Text style={styles.link}>+ Photo</Text>
+                  </Pressable>
                 </View>
               ))
             )}

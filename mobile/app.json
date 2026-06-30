@@ -26,6 +26,12 @@
         {
           "locationWhenInUsePermission": "FoodSupply IQ uses your location to log where field visits happen."
         }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "FoodSupply IQ uses your photos to attach pictures to field visits."
+        }
       ]
     ],
     "extra": {

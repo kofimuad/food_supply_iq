@@ -13,6 +13,7 @@ export type {
   ContactCreate,
   ContactUpdate,
   LoginRequest,
+  Media,
   Product,
   ProductCreate,
   ProductUpdate,

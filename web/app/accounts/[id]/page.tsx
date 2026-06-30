@@ -6,6 +6,7 @@ import { useState } from "react";
 import { ContactsEditor } from "@/components/contacts-editor";
 import { RequireAuth } from "@/components/require-auth";
 import { StatusControl } from "@/components/status-control";
+import { VisitPhotos } from "@/components/visit-photos";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth-context";
 import { categoryLabel, statusLabel } from "@/lib/constants";
@@ -111,6 +112,7 @@ function ProfileView() {
                   <span className="text-muted-foreground">{formatDate(v.occurred_at)}</span>
                 </div>
                 {v.notes && <p className="mt-1 text-muted-foreground">{v.notes}</p>}
+                <VisitPhotos visitId={v.id} />
               </li>
             ))}
           </ul>
