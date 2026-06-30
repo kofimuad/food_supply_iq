@@ -14,6 +14,7 @@ import {
   View,
 } from "react-native";
 import { changeStatus, fetchProfile, logVisit } from "../accounts";
+import { SampleForm } from "../components/SampleForm";
 import { uploadPhoto } from "../media";
 import { colors, fontSize, radius, spacing } from "../theme";
 import type { AccountProfile, AccountStatus, VisitOutcome } from "../types";
@@ -59,6 +60,7 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
   const [outcome, setOutcome] = useState<VisitOutcome | null>(null);
   const [notes, setNotes] = useState("");
   const [checkingIn, setCheckingIn] = useState(false);
+  const [showSample, setShowSample] = useState(false);
 
   const load = useCallback(() => {
     fetchProfile(accountId)
@@ -193,6 +195,22 @@ export function AccountProfileScreen({ accountId, onBack }: Props) {
             </Pressable>
           </Section>
 
+          <Section title="Record sample">
+            {showSample ? (
+              <SampleForm
+                accountId={accountId}
+                onDone={() => {
+                  setShowSample(false);
+                  load();
+                }}
+              />
+            ) : (
+              <Pressable style={styles.outline} onPress={() => setShowSample(true)}>
+                <Text style={styles.outlineText}>+ Sample</Text>
+              </Pressable>
+            )}
+          </Section>
+
           <Section title={`Contacts (${profile.contacts.length})`}>
             {profile.contacts.length === 0 ? (
               <Text style={styles.muted}>No contacts.</Text>
@@ -298,6 +316,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   checkInText: { color: colors.primaryForeground, fontWeight: "600" },
+  outline: {
+    borderWidth: 1,
+    borderColor: colors.border,
+    borderRadius: radius.md,
+    paddingVertical: spacing.sm,
+    paddingHorizontal: spacing.md,
+    alignSelf: "flex-start",
+  },
+  outlineText: { color: colors.foreground, fontWeight: "600", fontSize: fontSize.sm },
   row: {
     flexDirection: "row",
     justifyContent: "space-between",

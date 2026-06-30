@@ -33,3 +33,6 @@ export type ProductUpdate = Schemas["ProductUpdate"];
 
 export type ActivityEvent = Schemas["ActivityEvent"];
 export type ActivityFeed = Schemas["ActivityFeed"];
+
+export type Sample = Schemas["SampleOut"];
+export type SampleCreate = Schemas["SampleCreate"];

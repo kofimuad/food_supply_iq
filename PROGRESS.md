@@ -58,8 +58,12 @@ session can resume from here. See the architecture/backlog brief for full ACs,
       mobile capture (expo-image-picker, compress, upload); web thumbnail gallery
       on visit history. Prod needs an R2/MinIO bucket + creds (config only).
 
-## Epic 4 — Samples & Orders (core loop)  ⬜
-- [ ] 4.1 Record sample · [ ] 4.2 Trial order · [ ] 4.3 Repeat orders · [ ] 4.4 Sample→Trial→Repeat funnel
+## Epic 4 — Samples & Orders (core loop)  🚧 IN PROGRESS
+- [x] 4.1 Record sample — `routers/samples.py` (POST/list, product[]+qty, rep-scoped,
+      validates products); mobile SampleForm with cached product picker
+      (`src/products.ts` session cache); samples surface in web activity feed +
+      profile sample count. 3 tests.
+- [ ] 4.2 Trial order · [ ] 4.3 Repeat orders · [ ] 4.4 Sample→Trial→Repeat funnel
 
 ## Epic 5 — Map & Territory  ⬜
 - [ ] 5.1 Rep accounts on map · [ ] 5.2 Manager clusters/coverage
