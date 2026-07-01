@@ -469,6 +469,41 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/kpis": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Kpis */
+        get: operations["kpis_kpis_get"];
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/kpis/targets": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        /** Get Targets */
+        get: operations["get_targets_kpis_targets_get"];
+        /** Set Targets */
+        put: operations["set_targets_kpis_targets_put"];
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/health": {
         parameters: {
             query?: never;
@@ -724,6 +759,34 @@ export interface components {
         HTTPValidationError: {
             /** Detail */
             detail?: components["schemas"]["ValidationError"][];
+        };
+        /** KpiMetric */
+        KpiMetric: {
+            /** Key */
+            key: string;
+            /** Label */
+            label: string;
+            /** Value */
+            value: number;
+            /** Target */
+            target: number | null;
+            /** Spark */
+            spark: number[];
+        };
+        /** KpiResponse */
+        KpiResponse: {
+            /**
+             * Date From
+             * Format: date-time
+             */
+            date_from: string;
+            /**
+             * Date To
+             * Format: date-time
+             */
+            date_to: string;
+            /** Metrics */
+            metrics: components["schemas"]["KpiMetric"][];
         };
         /** LoginRequest */
         LoginRequest: {
@@ -1032,6 +1095,20 @@ export interface components {
             changed_at: string;
             /** Note */
             note: string | null;
+        };
+        /** TargetsOut */
+        TargetsOut: {
+            /** Targets */
+            targets: {
+                [key: string]: number;
+            };
+        };
+        /** TargetsUpdate */
+        TargetsUpdate: {
+            /** Targets */
+            targets: {
+                [key: string]: number;
+            };
         };
         /** TokenPair */
         TokenPair: {
@@ -2326,6 +2403,92 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ClusterCell"][];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    kpis_kpis_get: {
+        parameters: {
+            query?: {
+                rep_id?: string | null;
+                date_from?: string | null;
+                date_to?: string | null;
+            };
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["KpiResponse"];
+                };
+            };
+            /** @description Validation Error */
+            422: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["HTTPValidationError"];
+                };
+            };
+        };
+    };
+    get_targets_kpis_targets_get: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody?: never;
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TargetsOut"];
+                };
+            };
+        };
+    };
+    set_targets_kpis_targets_put: {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        requestBody: {
+            content: {
+                "application/json": components["schemas"]["TargetsUpdate"];
+            };
+        };
+        responses: {
+            /** @description Successful Response */
+            200: {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["TargetsOut"];
                 };
             };
             /** @description Validation Error */

@@ -41,3 +41,5 @@ export type OrderCreate = Schemas["OrderCreate"];
 export type OrderType = Schemas["OrderType"];
 export type FunnelStage = Schemas["FunnelStage"];
 export type ClusterCell = Schemas["ClusterCell"];
+export type KpiMetric = Schemas["KpiMetric"];
+export type KpiResponse = Schemas["KpiResponse"];

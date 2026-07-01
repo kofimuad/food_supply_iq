@@ -84,8 +84,12 @@ session can resume from here. See the architecture/backlog brief for full ACs,
 - [ ] Mobile native map (Mapbox RN) deferred — needs a custom Expo dev build
       (ties into Epic 7); backend nearby endpoint is ready for it.
 
-## Epic 6 — Dashboard & KPIs  ⬜
-- [ ] 6.1 Manager KPI dashboard vs target
+## Epic 6 — Dashboard & KPIs  🚧 IN PROGRESS
+- [x] 6.1 KPI backend — `routers/kpis.py`: GET /kpis (new accounts, visits,
+      samples, trial/repeat orders, revenue; value + target + daily spark;
+      filter rep/date) + GET/PUT /kpis/targets; `kpi_targets` table. Manager-only.
+      3 tests (delta-based to avoid DB-wide flakiness). 42 tests total.
+- [ ] 6.1 KPI dashboard (web): cards vs target + sparklines + target-setting UI
 
 ## Epic 7 — Rep Mobile (offline-first)  ⬜
 - [ ] 7.1 Today's schedule · [ ] 7.2 Offline logging + sync
