@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useEffect } from "react";
 import { ActivityFeed } from "@/components/activity-feed";
+import { KpiDashboard } from "@/components/kpi-dashboard";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useAuth } from "@/lib/auth-context";
@@ -60,7 +61,10 @@ export default function DashboardPage() {
       </nav>
 
       {user.role === "manager" ? (
-        <ActivityFeed />
+        <>
+          <KpiDashboard />
+          <ActivityFeed />
+        </>
       ) : (
         <Card>
           <CardContent className="pt-6">

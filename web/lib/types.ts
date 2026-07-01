@@ -7,6 +7,8 @@ export type {
   ActivityFeed,
   ClusterCell,
   FunnelStage,
+  KpiMetric,
+  KpiResponse,
   AccountCreate,
   AccountProfile,
   AccountStatus,
